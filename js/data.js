@@ -4,24 +4,14 @@
 const STORAGE_KEY='studyLogStable';
 const BACKUP_KEY='studyLogStable_V28_backup';
 const LEGACY_PREFIX='__v27';
-// 起動時に読み込んだ元データは、復旧が終わるまで絶対に削除・上書きしない。
-let DATA_RECOVERY_REQUIRED=false;
-let DATA_RECOVERY_RAW=null;
-let DATA_RECOVERY_REASON='';
 let db={};
 try{
-  DATA_RECOVERY_RAW=localStorage.getItem(STORAGE_KEY);
-  db=DATA_RECOVERY_RAW?JSON.parse(DATA_RECOVERY_RAW):{};
-  if(!db || typeof db!=='object' || Array.isArray(db)){
-    DATA_RECOVERY_REQUIRED=true;
-    DATA_RECOVERY_REASON='保存データの形式が正しくありません。';
-    db={};
-  }
+  const raw=localStorage.getItem(STORAGE_KEY);
+  db=raw?JSON.parse(raw):{};
+  if(!db || typeof db!=='object' || Array.isArray(db)) db={};
 }catch(e){
-  DATA_RECOVERY_REQUIRED=true;
-  DATA_RECOVERY_REASON='保存データを読み込めませんでした。元データは保護されています。';
   db={};
-  console.error('StudyLog: 保存データの読み込みに失敗しました。元データは削除していません。',e);
+  try{localStorage.removeItem(STORAGE_KEY)}catch(ignore){}
 }
 
 if(!db.subjects) db.subjects=[
@@ -139,13 +129,7 @@ function migrate(){
     db.testPeriods=(db.testPeriods||[]).map((t,i)=>({...t,id:t.id||`test_legacy_${i}`,subjectIds:Array.isArray(t.subjectIds)?t.subjectIds:(db.subjects||[]).map(s=>s.id)}));
   }
 }
-if(!DATA_RECOVERY_REQUIRED){
-  try{migrate()}catch(e){
-    DATA_RECOVERY_REQUIRED=true;
-    DATA_RECOVERY_REASON='データの更新処理に失敗しました。元データを保護しています。';
-    console.error('StudyLog: データ移行に失敗しました。',e);
-  }
-}
+migrate();
 
 // Restore the test schedule from its dedicated copies when the main DB was reset/overwritten.
 try{
@@ -168,42 +152,32 @@ db.testPeriods=db.testPeriods.filter(t=>
 if(!db.testHistory||typeof db.testHistory!=='object')db.testHistory={};
 db.testPeriods=db.testPeriods.map(t=>({...t,subjectIds:Array.isArray(t.subjectIds)?t.subjectIds:db.subjects.map(s=>s.id)}));
 if(!db.activeRecordTestId && db.testPeriods.length)db.activeRecordTestId=db.testPeriods.filter(t=>t.start&&t.end&&t.end>=dateKey()).sort((a,b)=>a.start.localeCompare(b.start))[0]?.id||db.testPeriods[0].id;
-if(!DATA_RECOVERY_REQUIRED){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(db))}catch(e){
-    DATA_RECOVERY_REQUIRED=true;
-    DATA_RECOVERY_REASON='起動時の保存に失敗しました。元データを保護しています。';
-    console.error('StudyLog: 起動時の保存に失敗しました。',e);
-  }
-}
+try{localStorage.setItem(STORAGE_KEY,JSON.stringify(db))}catch(e){}
 
 function save(){
-  // 読み込み・移行に問題がある場合は、保護中の元データを上書きしない。
-  if(DATA_RECOVERY_REQUIRED){
-    alert('保存データの復旧が必要なため、通常の保存を停止しています。先にバックアップの復元を行ってください。');
-    return false;
-  }
-
-  let payload;
+  // メインデータを保存する
   try{
-    payload=JSON.stringify(db);
-    if(typeof payload!=='string') throw new Error('データをJSONに変換できませんでした。');
+    const payload=JSON.stringify(db);
     localStorage.setItem(STORAGE_KEY,payload);
   }catch(e){
     console.error('StudyLog: データ保存に失敗しました',e);
+
     alert(
       'データを保存できませんでした。\n\n' +
-      'ブラウザの保存容量不足、または保存領域へのアクセス制限の可能性があります。\n' +
-      '画面を閉じたり再読み込みしたりする前に、バックアップを作成してください。'
+      'ブラウザの保存容量が不足している可能性があります。\n' +
+      '現在のデータをバックアップしてから、不要なデータやブラウザの保存容量を確認してください。'
     );
+
     return false;
   }
 
-  // 予備データは補助機能。メインデータの保存成功を妨げない。
+  // テスト日程の復元用データも保存する
   try{
     localStorage.setItem('studyLogV28_testDate',db.testDate||'');
     localStorage.setItem('studyLogV28_testPeriods',JSON.stringify(db.testPeriods||[]));
   }catch(e){
     console.warn('StudyLog: テスト日程の予備保存に失敗しました',e);
   }
+
   return true;
 }

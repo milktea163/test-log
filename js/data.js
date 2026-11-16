@@ -5,13 +5,37 @@ const STORAGE_KEY='studyLogStable';
 const BACKUP_KEY='studyLogStable_V28_backup';
 const LEGACY_PREFIX='__v27';
 let db={};
+
+// 読み込みに失敗したデータを保護するための情報
+let rawStoredData=null;
+let dataLoadBlocked=false;
+let dataLoadError=null;
+
 try{
-  const raw=localStorage.getItem(STORAGE_KEY);
-  db=raw?JSON.parse(raw):{};
-  if(!db || typeof db!=='object' || Array.isArray(db)) db={};
+  rawStoredData=localStorage.getItem(STORAGE_KEY);
+
+  if(rawStoredData!==null){
+    const parsed=JSON.parse(rawStoredData);
+
+    if(!parsed || typeof parsed!=='object' || Array.isArray(parsed)){
+      throw new Error('保存データの形式が正しくありません。');
+    }
+
+    db=parsed;
+  }else{
+    db={};
+  }
+
 }catch(e){
+  // 元の保存データは削除しない
   db={};
-  try{localStorage.removeItem(STORAGE_KEY)}catch(ignore){}
+  dataLoadBlocked=true;
+  dataLoadError=e;
+
+  console.error(
+    'StudyLog: 保存データを読み込めませんでした。元データを保護しています。',
+    e
+  );
 }
 
 if(!db.subjects) db.subjects=[
@@ -129,7 +153,9 @@ function migrate(){
     db.testPeriods=(db.testPeriods||[]).map((t,i)=>({...t,id:t.id||`test_legacy_${i}`,subjectIds:Array.isArray(t.subjectIds)?t.subjectIds:(db.subjects||[]).map(s=>s.id)}));
   }
 }
-migrate();
+if(!dataLoadBlocked){
+  migrate();
+}
 
 // Restore the test schedule from its dedicated copies when the main DB was reset/overwritten.
 try{
@@ -152,9 +178,30 @@ db.testPeriods=db.testPeriods.filter(t=>
 if(!db.testHistory||typeof db.testHistory!=='object')db.testHistory={};
 db.testPeriods=db.testPeriods.map(t=>({...t,subjectIds:Array.isArray(t.subjectIds)?t.subjectIds:db.subjects.map(s=>s.id)}));
 if(!db.activeRecordTestId && db.testPeriods.length)db.activeRecordTestId=db.testPeriods.filter(t=>t.start&&t.end&&t.end>=dateKey()).sort((a,b)=>a.start.localeCompare(b.start))[0]?.id||db.testPeriods[0].id;
-try{localStorage.setItem(STORAGE_KEY,JSON.stringify(db))}catch(e){}
+if(!dataLoadBlocked){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
+  }catch(e){
+    console.error('StudyLog: 起動時の保存に失敗しました。',e);
+  }
+}
 
 function save(){
+   // 読み込みに失敗した場合は元データを上書きしない
+  if(dataLoadBlocked){
+    console.error(
+      'StudyLog: データが保護されているため保存を停止しました。',
+      dataLoadError
+    );
+
+    alert(
+      '保存データを正常に読み込めなかったため、保存を停止しています。\n\n' +
+      '元のデータは削除・上書きしていません。\n' +
+      'バックアップからの復旧が必要です。'
+    );
+
+    return false;
+  } 
   // メインデータを保存する
   try{
     const payload=JSON.stringify(db);

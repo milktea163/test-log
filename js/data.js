@@ -10,6 +10,9 @@ let db={};
 let rawStoredData=null;
 let dataLoadBlocked=false;
 let dataLoadError=null;
+// 保存失敗状態の管理
+let storageSaveFailed=false;
+let saveFailureNotified=false;
 
 try{
   rawStoredData=localStorage.getItem(STORAGE_KEY);
@@ -187,44 +190,90 @@ if(!dataLoadBlocked){
 }
 
 function save(){
-   // 読み込みに失敗した場合は元データを上書きしない
+
+  // 読み込みに失敗したデータは上書きしない
   if(dataLoadBlocked){
     console.error(
       'StudyLog: データが保護されているため保存を停止しました。',
       dataLoadError
     );
 
-    alert(
-      '保存データを正常に読み込めなかったため、保存を停止しています。\n\n' +
-      '元のデータは削除・上書きしていません。\n' +
-      'バックアップからの復旧が必要です。'
-    );
+    if(!saveFailureNotified){
+      alert(
+        '保存データを正常に読み込めなかったため、保存を停止しています。\n\n' +
+        '元のデータは削除・上書きしていません。\n' +
+        'バックアップからの復旧が必要です。'
+      );
 
+      saveFailureNotified=true;
+    }
+
+    storageSaveFailed=true;
     return false;
-  } 
-  // メインデータを保存する
+  }
+
+  // メインデータを保存
   try{
     const payload=JSON.stringify(db);
     localStorage.setItem(STORAGE_KEY,payload);
-  }catch(e){
-    console.error('StudyLog: データ保存に失敗しました',e);
 
-    alert(
-      'データを保存できませんでした。\n\n' +
-      'ブラウザの保存容量が不足している可能性があります。\n' +
-      '現在のデータをバックアップしてから、不要なデータやブラウザの保存容量を確認してください。'
+  }catch(e){
+
+    console.error(
+      'StudyLog: データ保存に失敗しました。',
+      e
     );
+
+    storageSaveFailed=true;
+
+    // 連続して警告が表示されないようにする
+    if(!saveFailureNotified){
+      alert(
+        'データを保存できませんでした。\n\n' +
+        'ブラウザの保存容量が不足している可能性があります。\n\n' +
+        'アプリを閉じたり再読み込みしたりせず、' +
+        '保存容量を確認してください。'
+      );
+
+      saveFailureNotified=true;
+    }
 
     return false;
   }
 
-  // テスト日程の復元用データも保存する
+  // テスト日程の予備データを保存
   try{
-    localStorage.setItem('studyLogV28_testDate',db.testDate||'');
-    localStorage.setItem('studyLogV28_testPeriods',JSON.stringify(db.testPeriods||[]));
+    localStorage.setItem(
+      'studyLogV28_testDate',
+      db.testDate||''
+    );
+
+    localStorage.setItem(
+      'studyLogV28_testPeriods',
+      JSON.stringify(db.testPeriods||[])
+    );
+
   }catch(e){
-    console.warn('StudyLog: テスト日程の予備保存に失敗しました',e);
+    console.warn(
+      'StudyLog: テスト日程の予備保存に失敗しました。',
+      e
+    );
   }
+
+  // 保存成功
+  storageSaveFailed=false;
+  saveFailureNotified=false;
 
   return true;
 }
+
+// 未保存データがある状態で画面を離れる際に警告する
+window.addEventListener('beforeunload',function(e){
+
+  if(storageSaveFailed){
+
+    e.preventDefault();
+    e.returnValue='';
+  }
+
+});

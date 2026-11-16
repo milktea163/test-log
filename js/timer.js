@@ -46,21 +46,28 @@ function setTimerStoppedUI(){
  if(status)status.innerText='停止中';
 }
 
-// 経過時間のうち、まだ記録していない分だけ保存する
 function persistSessionProgress(){
- if(!isRunning||timerStartedAt===null)return;
 
- const elapsed=Math.max(
-  0,
-  Math.floor((Date.now()-timerStartedAt)/1000)
- );
+  if(!isRunning||timerStartedAt===null)return;
 
- const delta=Math.max(0,elapsed-sessionRecordedSeconds);
+  const elapsed=Math.max(
+    0,
+    Math.floor((Date.now()-timerStartedAt)/1000)
+  );
 
- if(delta>0){
-  sessionRecordedSeconds=elapsed;
-  recordTime(delta);
- }
+  const delta=Math.max(
+    0,
+    elapsed-sessionRecordedSeconds
+  );
+
+  if(delta>0){
+
+    // 保存の成否にかかわらず、計測時間はDBに反映する
+    // 保存失敗時も次の保存機会にまとめて保存できる
+    sessionRecordedSeconds=elapsed;
+
+    recordTime(delta);
+  }
 }
 
 // 実際の時刻を基準にタイマーを更新する

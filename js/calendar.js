@@ -1,6 +1,14 @@
 function updateTestDate(v){
- // Legacy compatibility: the old single-date control is no longer the main schedule.
- db.testDate=v||'';save();updateCountdown();
+  const previousDb=cloneDb();
+
+  db.testDate=v||'';
+
+  if(!saveDbMutation(previousDb)){
+    updateCountdown();
+    return;
+  }
+
+  updateCountdown();
 }
 function formatDateJP(key){
  if(!key)return '';
@@ -50,13 +58,72 @@ function openDayDetail(key){
 }
 
 function addTestPeriod(){
- const n=document.getElementById('test-period-name').value.trim(),s=document.getElementById('test-start').value,e=document.getElementById('test-end').value;
- if(!n||!s||!e)return alert('テスト名・開始日・終了日を入力してください。');
- if(e<s)return alert('終了日は開始日以降にしてください。');
- const t={id:`test_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,name:n,start:s,end:e,subjectIds:db.subjects.map(x=>x.id),reflections:{}};
- db.testPeriods.push(t);db.testPeriods.sort((a,b)=>(a.start||'').localeCompare(b.start||''));if(!db.activeRecordTestId)db.activeRecordTestId=t.id;save();renderRecordTestSelect();renderTestSubjectSettings(t.id);renderSubjectButtons();document.getElementById('test-period-name').value='';document.getElementById('test-start').value='';document.getElementById('test-end').value='';renderCalendar();updateCountdown();renderReflectionList();alert('テスト日程を登録しました。')
+
+  const n=document.getElementById('test-period-name').value.trim();
+  const s=document.getElementById('test-start').value;
+  const e=document.getElementById('test-end').value;
+
+  if(!n||!s||!e){
+    return alert('テスト名・開始日・終了日を入力してください。');
+  }
+
+  if(e<s){
+    return alert('終了日は開始日以降にしてください。');
+  }
+
+  const previousDb=cloneDb();
+
+  const t={
+    id:`test_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
+    name:n,
+    start:s,
+    end:e,
+    subjectIds:db.subjects.map(x=>x.id),
+    reflections:{}
+  };
+
+  db.testPeriods.push(t);
+
+  db.testPeriods.sort(
+    (a,b)=>(a.start||'').localeCompare(b.start||'')
+  );
+
+  if(!db.activeRecordTestId){
+    db.activeRecordTestId=t.id;
+  }
+
+  if(!saveDbMutation(previousDb)){
+    renderReflectionList();
+    updateCountdown();
+    return;
+  }
+
+  renderRecordTestSelect();
+  renderTestSubjectSettings(t.id);
+  renderSubjectButtons();
+
+  document.getElementById('test-period-name').value='';
+  document.getElementById('test-start').value='';
+  document.getElementById('test-end').value='';
+
+  renderCalendar();
+  updateCountdown();
+  renderReflectionList();
+
+  alert('テスト日程を登録しました。');
 }
-function updateCountdownPeriod(v){db.countdownDisplayPeriod=Number(v);save();renderCalendar()}
+function updateCountdownPeriod(v){
+
+  const previousDb=cloneDb();
+
+  db.countdownDisplayPeriod=Number(v);
+
+  if(!saveDbMutation(previousDb)){
+    return;
+  }
+
+  renderCalendar();
+}
 function openReportModal(){renderReflectionList();document.getElementById('reportModal').classList.add('open')}
 function renderReflectionList(){
  const root=document.getElementById('reflection-list'),modalRoot=document.getElementById('test-period-list');root.innerHTML='';modalRoot.innerHTML='';
@@ -69,9 +136,38 @@ function renderReflectionList(){
  })
 }
 function deleteTestPeriod(id){
- const t=db.testPeriods.find(x=>x.id===id);if(!t)return;
- if(!confirm(`「${t.name}」を削除しますか？\nこのテストの攻略タスクと振り返りも関連付けが解除されます。`))return;
- db.testPeriods=db.testPeriods.filter(x=>x.id!==id);delete db.periodTasks[id];if(db.activeRecordTestId===id)db.activeRecordTestId=db.testPeriods[0]?.id||'';save();renderRecordTestSelect();renderSubjectButtons();renderCalendar();renderReflectionList();updateCountdown()
+
+  const t=db.testPeriods.find(x=>x.id===id);
+  if(!t)return;
+
+  if(!confirm(
+    `「${t.name}」を削除しますか？\n`+
+    'このテストの攻略タスクと振り返りも関連付けが解除されます。'
+  )){
+    return;
+  }
+
+  const previousDb=cloneDb();
+
+  db.testPeriods=db.testPeriods.filter(x=>x.id!==id);
+
+  delete db.periodTasks[id];
+
+  if(db.activeRecordTestId===id){
+    db.activeRecordTestId=db.testPeriods[0]?.id||'';
+  }
+
+  if(!saveDbMutation(previousDb)){
+    renderReflectionList();
+    renderRecordTestSelect();
+    return;
+  }
+
+  renderRecordTestSelect();
+  renderSubjectButtons();
+  renderCalendar();
+  renderReflectionList();
+  updateCountdown();
 }
 function openTestDetail(id){
  detailTestId=id;const t=db.testPeriods.find(x=>x.id===id);if(!t)return;

@@ -1,33 +1,38 @@
-
 function recordTime(sec){
- sec=Number(sec)||0;
- if(sec<=0)return;
 
- // 記録対象の教科が存在するか確認
- if(!currentSubject||!db.subjects.some(s=>s.id===currentSubject)){
-  console.warn('記録対象の教科が見つかりません。');
-  return;
- }
+  sec=Number(sec)||0;
 
- const today=dateKey();
- const test=getRecordTest();
+  if(sec<=0)return true;
 
- if(test){
-  db.testHistory[test.id]??={};
-  db.testHistory[test.id][today]??={};
+  if(
+    !currentSubject||
+    !db.subjects.some(s=>s.id===currentSubject)
+  ){
+    console.warn('記録対象の教科が見つかりません。');
+    return false;
+  }
 
-  db.testHistory[test.id][today][currentSubject]=
-   (Number(db.testHistory[test.id][today][currentSubject])||0)+sec;
- }else{
-  db.history[today]??={};
+  const today=dateKey();
+  const test=getRecordTest();
 
-  db.history[today][currentSubject]=
-   (Number(db.history[today][currentSubject])||0)+sec;
- }
+  if(test){
 
- // 学習時間の保存だけを行う
- // 画面の再描画は別の関数で実行する
- save();
+    db.testHistory[test.id]??={};
+    db.testHistory[test.id][today]??={};
+
+    db.testHistory[test.id][today][currentSubject]=
+      (Number(db.testHistory[test.id][today][currentSubject])||0)+sec;
+
+  }else{
+
+    db.history[today]??={};
+
+    db.history[today][currentSubject]=
+      (Number(db.history[today][currentSubject])||0)+sec;
+  }
+
+  // 保存失敗時もアプリ内の記録は保持する
+  return save();
 }
 
 // 学習記録に関係する画面をまとめて更新する

@@ -32,27 +32,41 @@ function renderRecordTestSelect(){
 }
 
 function changeRecordTest(id){
- const sel=document.getElementById('record-test-select');
 
- if(isRunning){
-  if(sel)sel.value=db.activeRecordTestId||'';
-  alert('タイマー動作中は記録先を変更できません。STOPしてから変更してください。');
-  return;
- }
+  const sel=document.getElementById('record-test-select');
 
- db.activeRecordTestId=id||'';
+  if(isRunning){
+    if(sel)sel.value=db.activeRecordTestId||'';
 
- const allowed=subjectsForTest(getRecordTest());
+    alert(
+      'タイマー動作中は記録先を変更できません。STOPしてから変更してください。'
+    );
 
- if(!allowed.some(s=>s.id===currentSubject)){
-  currentSubject=allowed[0]?.id||'';
- }
+    return;
+  }
 
- save();
- renderSubjectButtons();
- renderHomeStats();
- renderTimeGrid();
- updateChart();
+  const previousDb=cloneDb();
+  const previousSubject=currentSubject;
+
+  db.activeRecordTestId=id||'';
+
+  const allowed=subjectsForTest(getRecordTest());
+
+  if(!allowed.some(s=>s.id===currentSubject)){
+    currentSubject=allowed[0]?.id||'';
+  }
+
+  if(!saveDbMutation(previousDb)){
+    currentSubject=previousSubject;
+    renderRecordTestSelect();
+    renderSubjectButtons();
+    return;
+  }
+
+  renderSubjectButtons();
+  renderHomeStats();
+  renderTimeGrid();
+  updateChart();
 }
 
 function renderTestSubjectSettings(testId){
@@ -110,86 +124,61 @@ function renderTestSubjectSettings(testId){
 }
 
 function saveTestSubjectSettings(){
- const id=document.getElementById('subject-test-select')?.value;
- const t=db.testPeriods.find(x=>x.id===id);
 
- if(!t){
-  return alert('先にテスト日程を登録してください。');
- }
+  const id=document.getElementById('subject-test-select')?.value;
+  const t=db.testPeriods.find(x=>x.id===id);
 
- // 先に選択内容を取得する。ここではまだDBを変更しない。
- const selectedIds=[
-  ...document.querySelectorAll('#test-subject-settings input[type=checkbox]:checked')
- ].map(x=>x.dataset.subjectId)
-  .filter(id=>db.subjects.some(s=>s.id===id));
+  if(!t){
+    return alert('先にテスト日程を登録してください。');
+  }
 
- // 0教科の場合はDBを変更せず終了
- if(!selectedIds.length){
-  return alert('少なくとも1教科は選択してください。');
- }
+  const selectedIds=[
+    ...document.querySelectorAll(
+      '#test-subject-settings input[type=checkbox]:checked'
+    )
+  ].map(x=>x.dataset.subjectId)
+   .filter(id=>db.subjects.some(s=>s.id===id));
 
- // 記録中の教科が対象外になる変更を防止
- if(
-  isRunning&&
-  db.activeRecordTestId===id&&
-  !selectedIds.includes(currentSubject)
- ){
-  return alert('タイマー動作中の教科は対象外にできません。STOPしてから変更してください。');
- }
+  if(!selectedIds.length){
+    return alert('少なくとも1教科は選択してください。');
+  }
 
- // ここからDBを更新
- t.subjectIds=selectedIds;
+  if(
+    isRunning&&
+    db.activeRecordTestId===id&&
+    !selectedIds.includes(currentSubject)
+  ){
+    return alert(
+      'タイマー動作中の教科は対象外にできません。STOPしてから変更してください。'
+    );
+  }
 
- if(
-  db.activeRecordTestId===id&&
-  !selectedIds.includes(currentSubject)
- ){
-  currentSubject=selectedIds[0];
- }
+  const previousDb=cloneDb();
+  const previousSubject=currentSubject;
 
- save();
+  t.subjectIds=selectedIds;
 
- renderRecordTestSelect();
- renderSubjectButtons();
- renderHomeStats();
- renderTimeGrid();
- updateChart();
- renderStrategy();
+  if(
+    db.activeRecordTestId===id&&
+    !selectedIds.includes(currentSubject)
+  ){
+    currentSubject=selectedIds[0];
+  }
 
- alert('このテストの教科を保存しました。');
-}
+  if(!saveDbMutation(previousDb)){
+    currentSubject=previousSubject;
+    renderTestSubjectSettings(id);
+    return;
+  }
 
-function renderSubjectButtons(){
- const root=document.getElementById('subject-buttons');
- if(!root)return;
+  renderRecordTestSelect();
+  renderSubjectButtons();
+  renderHomeStats();
+  renderTimeGrid();
+  updateChart();
+  renderStrategy();
 
- root.innerHTML='';
-
- subjectsForTest(getRecordTest()).forEach(s=>{
-  const b=document.createElement('button');
-
-  b.className='subject-btn'+
-   (s.id===currentSubject?' active':'');
-
-  b.style.borderColor=s.color;
-
-  b.innerHTML=
-   `${s.id===currentSubject?'✓ ':''}`+
-   `<span>${escapeHTML(s.icon||'📚')}</span>`+
-   `${escapeHTML(s.name)}`;
-
-  b.onclick=()=>{
-   if(isRunning)return;
-
-   currentSubject=s.id;
-   renderSubjectButtons();
-   updateSelectedSubjectNote();
-  };
-
-  root.appendChild(b);
- });
-
- updateSelectedSubjectNote();
+  alert('このテストの教科を保存しました。');
 }
 
 function updateSelectedSubjectNote(){
@@ -236,74 +225,100 @@ function renderSubjectSettings(){
 }
 
 function updateSub(i,f,v){
- if(!db.subjects[i])return;
 
- if(f==='name'){
-  v=v.trim();
+  if(!db.subjects[i])return;
 
-  if(!v){
-   alert('教科名を入力してください。');
-   renderSubjectSettings();
-   return;
+  if(f==='name'){
+    v=v.trim();
+
+    if(!v){
+      alert('教科名を入力してください。');
+      renderSubjectSettings();
+      return;
+    }
   }
- }
 
- db.subjects[i][f]=v;
+  const previousDb=cloneDb();
 
- save();
- renderSubjectButtons();
- renderSubjectSettings();
- renderTimeGrid();
- updateChart();
- renderStrategy();
- updateSelectedSubjectNote();
+  db.subjects[i][f]=v;
+
+  if(!saveDbMutation(previousDb)){
+    renderSubjectSettings();
+    return;
+  }
+
+  renderSubjectButtons();
+  renderSubjectSettings();
+  renderTimeGrid();
+  updateChart();
+  renderStrategy();
+  updateSelectedSubjectNote();
 }
 
 function addSub(){
- db.subjects.push({
-  id:'sub_'+Date.now(),
-  name:'新しい教科',
-  color:'#ffc8dd',
-  icon:'✏️'
- });
 
- save();
- renderSubjectButtons();
- renderSubjectSettings();
- renderTimeGrid();
- updateChart();
- renderStrategy();
+  const previousDb=cloneDb();
+
+  db.subjects.push({
+    id:'sub_'+Date.now(),
+    name:'新しい教科',
+    color:'#ffc8dd',
+    icon:'✏️'
+  });
+
+  if(!saveDbMutation(previousDb)){
+    renderSubjectSettings();
+    return;
+  }
+
+  renderSubjectButtons();
+  renderSubjectSettings();
+  renderTimeGrid();
+  updateChart();
+  renderStrategy();
 }
 
 function removeSub(i){
- const s=db.subjects[i];
- if(!s)return;
 
- if(db.subjects.length<=1){
-  return alert('教科は1つ以上必要です。');
- }
+  const s=db.subjects[i];
+  if(!s)return;
 
- // 記録中の教科は削除できない
- if(isRunning&&currentSubject===s.id){
-  return alert('タイマーで記録中の教科は削除できません。STOPしてから削除してください。');
- }
+  if(db.subjects.length<=1){
+    return alert('教科は1つ以上必要です。');
+  }
 
- if(!confirm(
-  `「${s.name}」を削除しますか？\n既存の学習記録は残りますが、教科一覧から非表示になります。`
- ))return;
+  if(isRunning&&currentSubject===s.id){
+    return alert(
+      'タイマーで記録中の教科は削除できません。STOPしてから削除してください。'
+    );
+  }
 
- // 現在選択中の教科を削除する場合は別の教科に切り替える
- if(currentSubject===s.id){
-  currentSubject=db.subjects[i===0?1:0].id;
- }
+  if(!confirm(
+    `「${s.name}」を削除しますか？\n既存の学習記録は残りますが、教科一覧から非表示になります。`
+  )){
+    return;
+  }
 
- db.subjects.splice(i,1);
+  const previousDb=cloneDb();
+  const previousSubject=currentSubject;
 
- save();
- renderSubjectButtons();
- renderSubjectSettings();
- renderTimeGrid();
- updateChart();
- renderStrategy();
- updateSelectedSubjectNote();
+  if(currentSubject===s.id){
+    currentSubject=db.subjects[i===0?1:0].id;
+  }
+
+  db.subjects.splice(i,1);
+
+  if(!saveDbMutation(previousDb)){
+    currentSubject=previousSubject;
+    renderSubjectSettings();
+    renderSubjectButtons();
+    return;
+  }
+
+  renderSubjectButtons();
+  renderSubjectSettings();
+  renderTimeGrid();
+  updateChart();
+  renderStrategy();
+  updateSelectedSubjectNote();
 }

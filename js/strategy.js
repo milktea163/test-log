@@ -25,34 +25,67 @@ function renderStrategy(){
 function switchTaskPeriod(v){selectedTaskPeriodId=v;renderStrategy()}
 
 function setGlobalRep(n){
- db.globalRepGoal=n;
- save();
- renderStrategy();
- renderHomeProgress();
+
+  const previousDb=cloneDb();
+
+  db.globalRepGoal=n;
+
+  if(!saveDbMutation(previousDb)){
+    renderStrategy();
+    renderHomeProgress();
+    return;
+  }
+
+  renderStrategy();
+  renderHomeProgress();
 }
 
 function updateTaskName(sid,i,val){
- const src=getTaskSource();
 
- src[sid]??=[];
- src[sid][i]??={name:'',checks:[]};
- src[sid][i].name=val;
+  const previousDb=cloneDb();
+  const src=getTaskSource();
 
- save();
- renderStrategy();
- renderHomeProgress();
+  src[sid]??=[];
+  src[sid][i]??={name:'',checks:[]};
+
+  src[sid][i].name=val;
+
+  if(!saveDbMutation(previousDb)){
+    renderStrategy();
+    renderHomeProgress();
+    return;
+  }
+
+  renderStrategy();
+  renderHomeProgress();
 }
 
 function toggleCheck(sid,i,r){
- const src=getTaskSource();
 
- src[sid]??=[];
- src[sid][i]??={name:'',checks:[]};
- src[sid][i].checks??=[];
- src[sid][i].checks[r]=!src[sid][i].checks[r];
+  const previousDb=cloneDb();
+  const src=getTaskSource();
 
- save();
- renderStrategy();
- renderHomeProgress();
+  src[sid]??=[];
+  src[sid][i]??={name:'',checks:[]};
+  src[sid][i].checks??=[];
+
+  src[sid][i].checks[r]=!src[sid][i].checks[r];
+
+  if(!saveDbMutation(previousDb)){
+    renderStrategy();
+    renderHomeProgress();
+    return;
+  }
+
+  renderStrategy();
+  renderHomeProgress();
 }
-function saveAndCloseTasks(){save();renderHomeStats();showScreen('home')}
+function saveAndCloseTasks(){
+
+  if(!save()){
+    return;
+  }
+
+  renderHomeStats();
+  showScreen('home');
+}

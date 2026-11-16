@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>テスト攻略ログ V28.13</title>
+<link rel="apple-touch-icon" href="IMG_5878.jpeg">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+<div id="welcome">
+  <div class="icon-box"><img src="IMG_5878.jpeg" alt="テスト攻略ログ" onerror="this.style.display='none'"></div>
+  <h1 class="welcome-title">テスト攻略ログ</h1>
+  <div class="bubble">👩‍🏫「目標を設定して、15分ずつの積み重ねでテストを攻略しよう！」</div>
+  <button type="button" id="enter-app-button" class="enter">はじめる</button>
+</div>
+
+<div id="chartDetailModal" class="modal"><div class="modal-panel" style="max-width:390px"><div><button class="close" onclick="closeChartDetail()">×</button><h3 id="chartDetailTitle">教科の詳細</h3><div id="chartDetailBody"></div><button class="primary full" onclick="closeChartDetail()">閉じる</button></div></div></div>
+<div id="autoLockModal" class="modal">
+ <div class="modal-panel" style="max-width:620px">
+  <h2 style="margin:0 0 18px;color:#555">📱 はじめに</h2>
+  <p style="text-align:left;font-size:1.05rem;line-height:1.9;margin:0 0 22px">
+   勉強中に画面が自動で消えないようにする場合は、<br>
+   <strong>設定 → 画面表示と明るさ → 自動ロック → なし</strong><br>
+   にしてください。
+  </p>
+  <button type="button" id="auto-lock-ok-button" class="primary" style="min-width:140px">OK</button>
+ </div>
+</div>
+<div id="guideModal" class="modal">
+ <div class="modal-panel first-guide-modal" style="max-width:620px">
+  <div class="first-guide-head">
+   <h2 style="margin:0;color:var(--pink2)">🌸 はじめての方へ</h2>
+   <button type="button" id="guide-ok-button" class="first-guide-close" aria-label="閉じる">×</button>
+  </div>
+  <p class="action-hint" style="font-size:.9rem;margin:10px 0 12px;text-align:left">
+   この順番で進めると、すぐに使い始められます。
+  </p>
+  <div class="step-list">
+   <div class="step-link"><span class="step-num">1</span><span>📅 テスト日程を登録する</span></div>
+   <div class="step-link"><span class="step-num">2</span><span>📖 テスト範囲を登録する</span></div>
+   <div class="step-link"><span class="step-num">3</span><span>⏱️ 教科を選んでSTARTする</span></div>
+   <div class="step-link"><span class="step-num">4</span><span>📊 勉強記録を確認する</span></div>
+  </div>
+  <button type="button" id="guide-home-button" class="primary full">閉じる</button>
+ </div>
+</div>
+
+<header class="app-header">
+ <h1>📚 テスト攻略ログ</h1>
+ <div class="header-actions">
+  <button class="header-help-link" aria-label="使い方を開く" onclick="openHelp()">使い方→</button>
+  <button class="help-btn" aria-label="使い方・ヘルプ" onclick="openHelp()">?</button>
+  <button class="icon-btn" aria-label="設定" onclick="showScreen('settings')">⚙️</button>
+ </div>
+</header>
+
+<main>
+<section id="home" class="screen active">
+ <div class="hero-count">
+  <div class="label">🚀 次のテスト</div>
+  <div id="nextTestName" class="next-test-name">テスト日程未登録</div>
+  <div id="countdownDisplay" class="days">まずは登録しましょう</div>
+  <div id="nextTestDate" class="hero-next-date"></div>
+  <button class="hero-schedule-button" onclick="showScreen('calendar')">📅 テスト日程を登録</button>
+ </div>
+
+
+ <div class="card">
+  <div class="section-title-row"><h2 class="card-title">☀️ 今日の勉強</h2><button class="inline-help" onclick="openHelp('home')">?</button></div>
+  <div id="todayTotal" class="stat-big">0分</div>
+  <div id="todayBreakdown" class="breakdown"></div>
+  <div id="todayBreakdownMore" class="small" style="margin-top:6px"></div>
+  <button class="secondary full" style="margin-top:10px" onclick="scrollToId('today-record')">📊 今日の記録を見る</button>
+ </div>
+
+ <div class="card" id="timerCard">
+  <div class="section-title-row"><h2 class="card-title">⏱️ 勉強タイマー</h2><button class="inline-help" onclick="openHelp('timer')">?</button></div>
+  <label for="record-test-select" style="display:block;text-align:left;font-weight:900;margin:8px 0 5px">📋 記録するテスト</label>
+  <select id="record-test-select" onchange="changeRecordTest(this.value)" style="width:100%;margin-bottom:10px"></select>
+  <div id="timer-display" class="timer-display">00:15:00</div>
+  <div class="action-hint">① 時間を選ぶ → ② 教科を選ぶ → ③ START</div>
+  <div id="timer-status" class="timer-status">停止中</div>
+  <div class="presets"><button class="preset" onclick="initTimer(15)">15分</button><button class="preset" onclick="initTimer(30)">30分</button><button class="preset" onclick="initTimer(60)">1時間</button></div>
+  <div id="subject-buttons" class="subject-grid"></div>
+  <div id="selected-subject-note" class="selected-note"></div>
+  <button id="start-btn" class="primary full" onclick="toggleTimer()">▶ START</button>
+  <button id="reset-btn" class="secondary full" style="margin-top:10px" onclick="resetTimer()">↺ タイマーをリセット</button>
+ </div>
+
+ <div class="card blue">
+  <div class="section-head"><h2 class="card-title">📖 テスト攻略</h2><span id="homeProgressHint" class="chip">まずは設定</span></div>
+  <div id="homeProgress"></div>
+  <button class="secondary full" style="margin-top:10px" onclick="showScreen('strategy')">📖 テスト範囲を登録・確認</button>
+ </div>
+
+ <div id="today-record" class="card">
+  <div class="section-head"><div class="section-title-row"><h2 class="card-title">📊 今日の詳細記録</h2><button class="inline-help" onclick="openHelp('record')">?</button></div><span class="small">1マス＝15分</span></div>
+  <div id="live-counters" class="breakdown"></div>
+  <div class="time-scroll" style="margin-top:10px"><div id="time-grid-root"></div></div>
+  <div class="balance-section">
+   <div class="balance-title-row"><h3>📊 教科バランス</h3><span class="small">勉強時間をリアルタイム反映</span></div>
+   <div class="balance-range" aria-label="教科バランスの期間">
+    <button type="button" data-balance-range="today" class="active" onclick="setBalanceRange('today')">今日</button>
+    <button type="button" data-balance-range="week" onclick="setBalanceRange('week')">今週</button>
+    <button type="button" data-balance-range="test" onclick="setBalanceRange('test')">テスト期間</button>
+   </div>
+   <div class="chart-box bar-chart-box">
+    <h4>📊 教科ごとの勉強時間</h4>
+    <div id="subjectBalanceBars"></div>
+   </div>
+   <div class="chart-box pie-chart-box">
+    <h4>🥧 勉強時間の割合</h4>
+    <div id="pieWrap"><canvas id="pieChart"></canvas></div>
+   </div>
+   <div id="balanceNumbers" class="balance-numbers"></div>
+  </div>
+ </div>
+</section>
+
+<section id="strategy" class="screen">
+ <div class="card blue">
+  <div class="section-title-row"><h2 class="card-title">📖 テスト攻略</h2><button class="inline-help" onclick="openHelp('strategy')">?</button></div>
+  <p class="small">テスト範囲を登録して、3・4・5周の進み具合を管理します。</p>
+  <label style="display:block;text-align:left;font-weight:900;margin:10px 0 5px">📋 対象のテスト</label>
+  <select id="task-test-period-select" onchange="switchTaskPeriod(this.value)"></select>
+  <div class="rep-selector row" style="margin-top:10px">
+   <button class="preset" onclick="setGlobalRep(3)">3回</button><button class="preset" onclick="setGlobalRep(4)">4回</button><button class="preset" onclick="setGlobalRep(5)">5回</button>
+  </div>
+  <div id="strategy-progress" class="progress-summary"></div>
+ </div>
+ <div id="task-container"></div>
+ <button class="primary full" onclick="saveAndCloseTasks()">閉じて保存する</button>
+</section>
+
+<section id="calendar" class="screen">
+ <div class="card" id="testScheduleCard">
+  <h2 class="card-title">📝 テスト日程を登録</h2>
+  <p class="small" style="text-align:left;margin-top:-4px">ここで第1回・第2回・第3回などのテスト期間を登録します。登録後はホームに一番近いテストが自動表示されます。</p>
+  <input id="test-period-name" type="text" placeholder="例：第1回定期テスト">
+  <div class="schedule-form" style="margin-top:10px">
+   <div class="schedule-field"><label for="test-start">開始日</label><input id="test-start" type="date"></div>
+   <div class="schedule-field"><label for="test-end">終了日</label><input id="test-end" type="date"></div>
+  </div>
+  <button class="primary full" style="margin-top:10px" onclick="addTestPeriod()">📅 テスト日程を登録</button>
+ </div>
+ <div class="card" id="testSubjectsCard">
+  <h2 class="card-title">📚 テストごとの教科設定</h2>
+  <p class="small" style="text-align:left">テストを選び、そのテストで受ける教科だけにチェックを入れてください。教科設定はテストごとに保存されます。</p>
+  <label for="subject-test-select" style="display:block;text-align:left;font-weight:900;margin:8px 0 5px">対象のテスト</label>
+  <select id="subject-test-select" onchange="renderTestSubjectSettings(this.value)" style="width:100%"></select>
+  <div id="test-subject-settings" class="help-grid" style="margin-top:12px"></div>
+  <button class="primary full" style="margin-top:12px" onclick="saveTestSubjectSettings()">このテストの教科を保存</button>
+ </div>
+ <div class="card">
+  <div class="calendar-head"><button class="preset" onclick="changeMonth(-1)">◀</button><div class="section-title-row"><h2 id="cal-month-title" class="card-title" style="margin:0"></h2><button class="inline-help" onclick="openHelp('calendar')">?</button></div><button class="preset" onclick="changeMonth(1)">▶</button></div>
+  <div class="weekdays" style="margin-top:10px"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
+  <div id="cal-grid" class="calendar-grid"></div>
+  <details style="margin-top:14px"><summary>🎨 カレンダーの色について</summary><p class="small">🔵 テスト期間　🩷 1週間前　🟡 2週間前　🟢 3週間前　● 勉強記録あり</p></details>
+ </div>
+ <div class="card">
+  <h2 class="card-title">📝 テストを振り返る</h2>
+  <p class="small">テスト期間ごとの勉強時間と、教科別の振り返りを確認できます。</p>
+  <button class="primary full" onclick="openReportModal()">テストを振り返る →</button>
+ </div>
+</section>
+
+<section id="reflection" class="screen">
+ <div class="card">
+  <div class="section-title-row"><h2 class="card-title">📝 テストを振り返る</h2><button class="inline-help" onclick="openHelp('reflection')">?</button></div>
+  <div id="reflection-list"></div>
+ </div>
+</section>
+
+<section id="settings" class="screen">
+ <div class="card">
+  <div class="section-title-row"><h2 class="card-title">⚙️ 設定</h2><button class="inline-help" onclick="openHelp('settings')">?</button></div>
+  <h3 style="text-align:left">🎨 教科設定</h3>
+  <div id="setting-list"></div>
+  <button class="secondary full" onclick="addSub()">＋ 教科を追加</button>
+ </div>
+ <div class="card">
+  <h3 class="card-title">📅 カウントダウン表示期間</h3>
+  <select id="countdown-period-select" onchange="updateCountdownPeriod(this.value)">
+   <option value="3">3週間前から表示</option><option value="2">2週間前から表示</option><option value="1">1週間前から表示</option>
+  </select>
+ </div>
+ <div class="card">
+  <h3 class="card-title">🔔 タイマー音</h3>
+  <div class="sound"><span>🔔 タイマー音</span><label class="switch"><input type="checkbox" id="sound-toggle-settings" checked onchange="syncSound(this.checked)"><span class="slider"></span></label></div>
+  <button class="secondary full" style="margin-top:8px" onclick="testAlertSound()">🔔 音を確認する</button>
+  <p class="small" style="margin-top:8px">タイマー終了時にお知らせ音が鳴ります。</p>
+ </div>
+ <div class="card">
+  <h3 class="card-title">📖 使い方</h3>
+  <p class="small" style="text-align:left">困ったときは、画面右上の「?」からいつでも確認できます。</p>
+  <button class="secondary full" onclick="openHelp()">❓ 使い方・ヘルプを見る</button>
+ </div>
+ <div class="card">
+  <h3 class="card-title">💾 データ管理</h3>
+  <p class="small" style="text-align:left">
+   勉強時間やテスト日程などのデータを保存できます。
+   定期的にバックアップを作成しましょう。
+  </p>
+  <button class="secondary full" onclick="createBackup()">
+   💾 バックアップを作成
+  </button>
+ </div> 
+ <footer>© 2026 Amity<br>All Rights Reserved.</footer>
+</section>
+</main>
+
+<nav class="nav">
+ <button data-screen="home" onclick="showScreen('home')">🏠<br>ホーム</button>
+ <button data-screen="strategy" onclick="showScreen('strategy')">📖<br>攻略</button>
+ <button data-screen="calendar" onclick="showScreen('calendar')">📅<br>カレンダー</button>
+ <button data-screen="reflection" onclick="showScreen('reflection')">📝<br>振り返り</button>
+ <button data-screen="settings" onclick="showScreen('settings')">⚙️<br>設定</button>
+</nav>
+
+<div id="helpModal" class="modal"><div class="modal-panel"><div class="modal-head"><h2 id="helpTitle">❓ 使い方・ヘルプ</h2><button class="close" onclick="closeModal('helpModal')">×</button></div><div id="helpContent"></div></div></div>
+
+<div id="dayModal" class="modal"><div class="modal-panel"><div class="modal-head"><h2 id="day-title">日付の記録</h2><button class="close" onclick="closeModal('dayModal')">×</button></div><div id="day-content"></div></div></div>
+
+<div id="reportModal" class="modal"><div class="modal-panel"><div class="modal-head"><h2>📝 テストを振り返る</h2><button class="close" onclick="closeModal('reportModal')">×</button></div><div id="test-period-list"></div></div></div>
+
+<div id="testDetailModal" class="modal"><div class="modal-panel"><div class="modal-head"><h2 id="detail-test-title">テスト詳細</h2><button class="close" onclick="closeTestDetail()">×</button></div>
+ <div class="card blue"><h3>📊 期間中の勉強時間</h3><div class="ext-scroll" id="period-time-grid-root"></div></div>
+ <div id="detail-subject-list"></div>
+ <button class="secondary full" onclick="closeTestDetail()">一覧へ戻る</button>
+</div></div>
+<script src="js/data.js"></script>
+<script src="js/guide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/timer.js"></script>
+<script src="js/backup.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/strategy.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/subjects.js"></script>
+<script src="js/records.js"></script>
+<script src="js/help.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

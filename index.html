@@ -12,6 +12,45 @@
 
 </head>
 <body>
+  <section id="recoveryPanel" style="
+  display:none;
+  max-width:620px;
+  margin:30px auto;
+  padding:20px;
+  background:#fff;
+  border:1px solid #e5a4c5;
+  border-radius:16px;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+">
+  <h2 style="color:#c03978">🛡️ データ復旧</h2>
+
+  <p style="line-height:1.8">
+    保存データを正常に読み込めなかったため、
+    通常の起動を停止しました。
+  </p>
+
+  <p style="line-height:1.8">
+    元のデータは削除・上書きしていません。
+    バックアップファイルを選択して復元してください。
+  </p>
+
+  <button type="button" class="primary full"
+    onclick="document.getElementById('backupFileInput').click()">
+    📂 バックアップから復元
+  </button>
+
+  <div class="backup-restore-preview"></div>
+
+  <button type="button" class="secondary full"
+    style="margin-top:12px"
+    onclick="downloadRawStoredData()">
+    🔒 保護された元データを書き出す
+  </button>
+
+  <p class="small" style="margin-top:14px">
+    ※ 復元するバックアップがない場合は、元データを書き出して保管してください。
+  </p>
+</section>
 
 <div id="welcome">
   <div class="icon-box"><img src="IMG_5878.jpeg" alt="テスト攻略ログ" onerror="this.style.display='none'"></div>
@@ -210,6 +249,13 @@
   <button class="secondary full" onclick="createBackup()">
    💾 バックアップを作成
   </button>
+  <button class="primary full"
+  style="margin-top:10px"
+  onclick="document.getElementById('backupFileInput').click()">
+  📂 バックアップから復元
+</button>
+
+<div class="backup-restore-preview"></div>
  </div> 
  <footer>© 2026 Amity<br>All Rights Reserved.</footer>
 </section>
@@ -247,5 +293,12 @@
 <script src="js/records.js"></script>
 <script src="js/help.js"></script>
 <script src="js/main.js"></script>
+<input
+  type="file"
+  id="backupFileInput"
+  accept=".json,application/json"
+  style="display:none"
+  onchange="selectBackupFile(this.files && this.files[0]);this.value=''"
+>
 </body>
 </html>

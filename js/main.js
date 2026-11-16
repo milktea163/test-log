@@ -41,13 +41,14 @@ function showFirstGuide(){
 function goHomeAndScroll(id){showScreen('home');setTimeout(()=>scrollToId(id),80)}
 
 function boot(){
-    // 保存データが破損している場合は通常起動を停止
-  if(dataLoadBlocked){
+    if(dataLoadBlocked){
+    showRecoveryPanel();
+
     alert(
       '保存データを正常に読み込めませんでした。\n\n' +
       '元のデータは保護されています。\n' +
       'データの上書きを防ぐため、通常起動を停止しました。\n\n' +
-      'バックアップからの復旧が必要です。'
+      '復旧画面からバックアップを読み込んでください。'
     );
 
     return;

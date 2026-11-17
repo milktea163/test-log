@@ -190,6 +190,24 @@ if(!dataLoadBlocked){
 }
 
 function save(){
+ /* =========================
+   安全なデータ変更
+========================= */
+
+// 変更前のデータを複製する
+function cloneDb(){
+  return JSON.parse(JSON.stringify(db));
+}
+
+// 保存に失敗した場合は変更前の状態に戻す
+function saveDbMutation(previousDb){
+  if(save()){
+    return true;
+  }
+
+  db=previousDb;
+  return false;
+} 
 
   // 読み込みに失敗したデータは上書きしない
   if(dataLoadBlocked){

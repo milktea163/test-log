@@ -30,6 +30,39 @@ function renderRecordTestSelect(){
 
  sel.value=db.testPeriods.some(t=>t.id===prior)?prior:'';
 }
+// タイマーで勉強する教科ボタンを表示する
+function renderSubjectButtons(){
+  const root=document.getElementById('subject-buttons');
+  if(!root)return;
+
+  root.innerHTML='';
+
+  subjectsForTest(getRecordTest()).forEach(s=>{
+    const b=document.createElement('button');
+
+    b.className='subject-btn'+
+      (s.id===currentSubject?' active':'');
+
+    b.style.borderColor=s.color;
+
+    b.innerHTML=
+      `${s.id===currentSubject?'✓ ':''}`+
+      `<span>${escapeHTML(s.icon||'📚')}</span>`+
+      `${escapeHTML(s.name)}`;
+
+    b.onclick=()=>{
+      if(isRunning)return;
+
+      currentSubject=s.id;
+      renderSubjectButtons();
+      updateSelectedSubjectNote();
+    };
+
+    root.appendChild(b);
+  });
+
+  updateSelectedSubjectNote();
+}
 
 function changeRecordTest(id){
 

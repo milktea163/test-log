@@ -110,8 +110,9 @@ function addTestPeriod(){
   updateCountdown();
   renderReflectionList();
 
-  alert('テスト日程を登録しました。');
+  showToast('テスト日程を登録しました！');
 }
+
 function updateCountdownPeriod(v){
 
   const previousDb=cloneDb();
@@ -167,8 +168,17 @@ function deleteTestPeriod(id){
   renderSubjectButtons();
   renderCalendar();
   renderReflectionList();
+
+  renderHomeStats();
+  renderTimeGrid();
+  updateChart();
+  renderStrategy();
+
   updateCountdown();
+
+  showToast('テスト日程を削除しました！');
 }
+
 function openTestDetail(id){
  detailTestId=id;const t=db.testPeriods.find(x=>x.id===id);if(!t)return;
  document.getElementById('detail-test-title').innerText=t.name;if(!t.reflections)t.reflections={};
@@ -185,5 +195,34 @@ function openTestDetail(id){
  document.querySelectorAll('#detail-subject-list textarea').forEach(a=>a.addEventListener('change',e=>saveReflection(detailTestId,e.target.dataset.ref,e.target.value)));
  document.getElementById('reportModal').classList.remove('open');document.getElementById('testDetailModal').classList.add('open')
 }
-function saveReflection(id,sid,v){const t=db.testPeriods.find(x=>x.id===id);if(!t)return;t.reflections??={};t.reflections[sid]=v;save()}
+
+function saveReflection(id,sid,v){
+
+  // 対象のテストを取得
+  const t=db.testPeriods.find(x=>x.id===id);
+
+  if(!t)return;
+
+  // 変更前のデータを保存
+  const previousDb=cloneDb();
+
+  // 振り返りデータを準備
+  t.reflections??={};
+
+  // 入力内容を反映
+  t.reflections[sid]=v;
+
+  // 保存を実行
+  if(!saveDbMutation(previousDb)){
+
+    // 保存失敗時は元のデータに戻して画面を再描画
+    openTestDetail(id);
+
+    return;
+  }
+
+  // 保存成功時のみ通知
+  showToast('振り返りを保存しました！');
+}
+
 function closeTestDetail(){document.getElementById('testDetailModal').classList.remove('open');showScreen('reflection')}

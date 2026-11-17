@@ -189,9 +189,9 @@ if(!dataLoadBlocked){
   }
 }
 
-function save(){
- /* =========================
-   安全なデータ変更
+
+/* =========================
+   安全なデータ変更・保存
 ========================= */
 
 // 変更前のデータを複製する
@@ -201,16 +201,21 @@ function cloneDb(){
 
 // 保存に失敗した場合は変更前の状態に戻す
 function saveDbMutation(previousDb){
+
   if(save()){
     return true;
   }
 
   db=previousDb;
   return false;
-} 
+}
+
+// データを保存する
+function save(){
 
   // 読み込みに失敗したデータは上書きしない
   if(dataLoadBlocked){
+
     console.error(
       'StudyLog: データが保護されているため保存を停止しました。',
       dataLoadError
@@ -232,6 +237,7 @@ function saveDbMutation(previousDb){
 
   // メインデータを保存
   try{
+
     const payload=JSON.stringify(db);
     localStorage.setItem(STORAGE_KEY,payload);
 
@@ -244,7 +250,6 @@ function saveDbMutation(previousDb){
 
     storageSaveFailed=true;
 
-    // 連続して警告が表示されないようにする
     if(!saveFailureNotified){
       alert(
         'データを保存できませんでした。\n\n' +
@@ -261,6 +266,7 @@ function saveDbMutation(previousDb){
 
   // テスト日程の予備データを保存
   try{
+
     localStorage.setItem(
       'studyLogV28_testDate',
       db.testDate||''
@@ -272,6 +278,7 @@ function saveDbMutation(previousDb){
     );
 
   }catch(e){
+
     console.warn(
       'StudyLog: テスト日程の予備保存に失敗しました。',
       e
@@ -284,6 +291,7 @@ function saveDbMutation(previousDb){
 
   return true;
 }
+
 
 // 未保存データがある状態で画面を離れる際に警告する
 window.addEventListener('beforeunload',function(e){

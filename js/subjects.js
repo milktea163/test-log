@@ -30,30 +30,94 @@ function renderRecordTestSelect(){
 
  sel.value=db.testPeriods.some(t=>t.id===prior)?prior:'';
 }
+
+tentionStates[subject.id];
+    const isBehind=Boolean(state?.isBehind);
+
+    b.className =
+  'subject-btn' +
+  (subject.id === currentSubject ? ' active' : '') +
+  (isBehind ? ' behind' : '');
+
 // タイマーで勉強する教科ボタンを表示する
 function renderSubjectButtons(){
   const root=document.getElementById('subject-buttons');
+  const summary=document.getElementById('subject-attention-summary');
+
   if(!root)return;
 
   root.innerHTML='';
 
-  subjectsForTest(getRecordTest()).forEach(s=>{
+  // タイマーの記録先に応じた教科を表示する
+  const recordTest=getRecordTest();
+  const subjects=subjectsForTest(recordTest);
+
+  // 注意表示は、次に控えているテストを基準にする
+  const attentionTest=getUpcomingAttentionTest();
+  const attentionStates=getSubjectAttentionStates(attentionTest);
+
+  const attentionSubjects=attentionTest
+    ?subjectsForTest(attentionTest).filter(
+      subject=>attentionStates[subject.id]?.isBehind
+    )
+    :[];
+
+  // 注意表示のメッセージ
+  if(summary){
+    if(attentionTest&&attentionSubjects.length){
+      const names=attentionSubjects.map(
+        subject=>`${subject.icon||'📚'} ${subject.name}`
+      ).join('、');
+
+      summary.innerHTML=
+        `<span class="attention-icon">⚠️</span>`+
+        `<span>${escapeHTML(attentionTest.name||'次のテスト')}に向けて、`+
+        `勉強時間が少なめの教科：${escapeHTML(names)}</span>`;
+
+      summary.classList.add('has-attention');
+
+    }else if(attentionTest){
+      summary.innerHTML=
+        `<span>${escapeHTML(attentionTest.name||'次のテスト')}に向けて、`+
+        `現在、勉強時間に大きな偏りはありません。</span>`;
+
+      summary.classList.add('has-attention');
+      summary.classList.remove('has-attention');
+
+    }else{
+      summary.innerHTML='';
+      summary.classList.remove('has-attention');
+    }
+  }
+
+  // タイマーの教科ボタン
+  subjects.forEach(subject=>{
     const b=document.createElement('button');
 
-    b.className='subject-btn'+
-      (s.id===currentSubject?' active':'');
+    const state=attentionStates[subject.id];
+    const isBehind=Boolean(state?.isBehind);
 
-    b.style.borderColor=s.color;
+    b.className='subject-btn'+
+      (subject.id===currentSubject?' active':'')+
+      (isBehind?' subject-attention':'')+
+      (isBehind&&db.attentionBlink?' attention-blink':'');
+
+    b.style.borderColor=subject.color;
+
+    const attentionLabel=isBehind
+      ?'<span class="subject-attention-label">時間少なめ</span>'
+      :'';
 
     b.innerHTML=
-      `${s.id===currentSubject?'✓ ':''}`+
-      `<span>${escapeHTML(s.icon||'📚')}</span>`+
-      `${escapeHTML(s.name)}`;
+      `${subject.id===currentSubject?'✓ ':''}`+
+      `<span>${escapeHTML(subject.icon||'📚')}</span>`+
+      `${escapeHTML(subject.name)}`+
+      attentionLabel;
 
     b.onclick=()=>{
       if(isRunning)return;
 
-      currentSubject=s.id;
+      currentSubject=subject.id;
       renderSubjectButtons();
       updateSelectedSubjectNote();
     };
@@ -63,6 +127,7 @@ function renderSubjectButtons(){
 
   updateSelectedSubjectNote();
 }
+
 
 function changeRecordTest(id){
 

@@ -62,6 +62,26 @@ if(db.countdownDisplayPeriod===undefined)db.countdownDisplayPeriod=1;
 if(db.testDate===undefined)db.testDate='';
 if(db.globalRepGoal===undefined)db.globalRepGoal=3;
 
+// 集中度記録・教科別注意表示の初期設定
+if(!Array.isArray(db.focusReviews)) db.focusReviews=[];
+if(typeof db.focusReviewEnabled!=='boolean') db.focusReviewEnabled=true;
+
+// 教科別の注意表示を始める残り日数（初期値：7日）
+if(db.attentionStartDays===undefined) db.attentionStartDays=7;
+
+// 注意表示の点滅設定
+if(typeof db.attentionBlink!=='boolean') db.attentionBlink=true;
+
+// 教科ごとの個別設定（未設定なら全体設定を使用）
+if(
+  !db.subjectAttentionOverrides ||
+  typeof db.subjectAttentionOverrides!=='object' ||
+  Array.isArray(db.subjectAttentionOverrides)
+){
+  db.subjectAttentionOverrides={};
+}
+
+
 /* =========================
    V28 data validation
 ========================= */
@@ -114,6 +134,61 @@ if(typeof db.activeRecordTestId!=='string') db.activeRecordTestId='';
 if(typeof db.testDate!=='string') db.testDate='';
 if(!Number.isFinite(Number(db.countdownDisplayPeriod))) db.countdownDisplayPeriod=1;
 if(!Number.isFinite(Number(db.globalRepGoal)) || Number(db.globalRepGoal)<1) db.globalRepGoal=3;
+
+// 集中度記録の形式確認
+if(!Array.isArray(db.focusReviews)){
+  db.focusReviews=[];
+}else{
+  db.focusReviews=db.focusReviews.filter(record=>
+    record &&
+    typeof record==='object' &&
+    !Array.isArray(record)
+  );
+}
+
+if(typeof db.focusReviewEnabled!=='boolean'){
+  db.focusReviewEnabled=true;
+}
+
+// 注意表示の日数は1～30日の範囲にする
+const attentionDays=Number(db.attentionStartDays);
+
+if(
+  !Number.isInteger(attentionDays) ||
+  attentionDays<1 ||
+  attentionDays>30
+){
+  db.attentionStartDays=7;
+}else{
+  db.attentionStartDays=attentionDays;
+}
+
+if(typeof db.attentionBlink!=='boolean'){
+  db.attentionBlink=true;
+}
+
+// 教科別の個別設定を確認
+if(
+  !db.subjectAttentionOverrides ||
+  typeof db.subjectAttentionOverrides!=='object' ||
+  Array.isArray(db.subjectAttentionOverrides)
+){
+  db.subjectAttentionOverrides={};
+}else{
+  Object.keys(db.subjectAttentionOverrides).forEach(id=>{
+    const days=Number(db.subjectAttentionOverrides[id]);
+
+    if(
+      !Number.isInteger(days) ||
+      days<1 ||
+      days>30
+    ){
+      delete db.subjectAttentionOverrides[id];
+    }else{
+      db.subjectAttentionOverrides[id]=days;
+    }
+  });
+}
 
 
 function pad(n){return String(n).padStart(2,'0')}

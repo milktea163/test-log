@@ -35,14 +35,47 @@ function recordTime(sec){
   return save();
 }
 
+
 // 学習記録に関係する画面をまとめて更新する
 function refreshRecordViews(){
- try{renderCalendar()}catch(e){console.error('カレンダー更新エラー',e)}
- try{renderTimeGrid()}catch(e){console.error('記録一覧更新エラー',e)}
- try{updateChart()}catch(e){console.error('グラフ更新エラー',e)}
- try{renderHomeStats()}catch(e){console.error('ホーム更新エラー',e)}
- try{renderStrategy()}catch(e){console.error('攻略画面更新エラー',e)}
+
+ try{
+  renderCalendar();
+ }catch(e){
+  console.error('カレンダー更新エラー',e);
+ }
+
+ try{
+  renderTimeGrid();
+ }catch(e){
+  console.error('記録一覧更新エラー',e);
+ }
+
+ try{
+  updateChart();
+ }catch(e){
+  console.error('グラフ更新エラー',e);
+ }
+
+ try{
+  renderHomeStats();
+ }catch(e){
+  console.error('ホーム更新エラー',e);
+ }
+
+ try{
+  renderStrategy();
+ }catch(e){
+  console.error('攻略画面更新エラー',e);
+ }
+
+ try{
+  renderSubjectButtons();
+ }catch(e){
+  console.error('教科ボタン更新エラー',e);
+ }
 }
+
 
 function renderHomeProgress(){
  const root=document.getElementById('homeProgress');
@@ -122,6 +155,130 @@ function renderHomeProgress(){
 }
 
 function totalForDate(key){const legacy=Object.values(db.history[key]||{}).reduce((a,b)=>a+(Number(b)||0),0);const scoped=Object.values(db.testHistory||{}).reduce((sum,th)=>sum+Object.values(th[key]||{}).reduce((a,b)=>a+(Number(b)||0),0),0);return legacy+scoped}
+
+// 次に控えているテストを自動取得する
+function getUpcomingAttentionTest(){
+  const today=dateKey();
+
+  const candidates=(db.testPeriods||[])
+    .filter(test=>
+      test &&
+      test.start &&
+      test.end &&
+      test.end>=today
+    )
+    .sort((a,b)=>a.start.localeCompare(b.start));
+
+  return candidates[0]||null;
+}
+
+// テスト期間における教科別の累積勉強時間を取得
+function getTestSubjectStudyTotals(test){
+
+ const totals={};
+
+ db.subjects.forEach(subject=>{
+  totals[subject.id]=0;
+ });
+
+ if(!test||!test.start||!test.end){
+  return totals;
+ }
+
+ // 既存のテスト振り返りと同じく開始日の14日前から集計
+ let current=parseDateKey(test.start);
+ current.setDate(current.getDate()-14);
+
+ const end=parseDateKey(test.end);
+
+ while(current<=end){
+
+  const key=dateKey(current);
+
+  // テスト専用の記録
+  const scoped=(db.testHistory?.[test.id]||{})[key]||{};
+
+  // テスト専用の記録がある日はそちらを優先
+  // なければ通常の勉強記録を使用
+  const daily=Object.keys(scoped).length
+   ?scoped
+   :(db.history?.[key]||{});
+
+  db.subjects.forEach(subject=>{
+
+   const seconds=Number(daily[subject.id])||0;
+
+   totals[subject.id]+=Math.max(0,seconds);
+  });
+
+  current.setDate(current.getDate()+1);
+ }
+
+ return totals;
+}
+
+// 教科ごとの注意表示を始める残り日数を取得
+function getSubjectAttentionDays(subjectId){
+
+ const override=db.subjectAttentionOverrides?.[subjectId];
+
+ if(Number.isInteger(Number(override))&&override!==undefined){
+  return Number(override);
+ }
+
+ return Number(db.attentionStartDays)||7;
+}
+
+// 教科別の勉強時間の偏りを判定
+function getSubjectAttentionStates(test){
+
+ if(!test){
+  return {};
+ }
+
+ const subjects=subjectsForTest(test);
+ const totals=getTestSubjectStudyTotals(test);
+
+ const totalSeconds=subjects.reduce(
+  (sum,subject)=>sum+(totals[subject.id]||0),
+  0
+ );
+
+ const averageSeconds=subjects.length
+  ?totalSeconds/subjects.length
+  :0;
+
+ const today=dateKey();
+ const daysUntil=Math.floor(
+  (parseDateKey(test.start)-parseDateKey(today))/86400000
+ );
+
+ const result={};
+
+ subjects.forEach(subject=>{
+
+  const subjectSeconds=totals[subject.id]||0;
+  const attentionDays=getSubjectAttentionDays(subject.id);
+
+  const withinAttentionPeriod=
+   daysUntil<=attentionDays&&
+   today<=test.end;
+
+  result[subject.id]={
+   seconds:subjectSeconds,
+   averageSeconds,
+   daysUntil,
+   attentionDays,
+   isBehind:
+    withinAttentionPeriod&&
+    averageSeconds>0&&
+    subjectSeconds<averageSeconds
+  };
+ });
+
+ return result;
+}
+
 function renderHomeStats(){
  const today=dateKey(),logs=(getRecordTest()?.id?((db.testHistory[getRecordTest().id]||{})[today]||{}):(db.history[today]||{})),total=Math.floor(Object.values(logs).reduce((a,b)=>a+(Number(b)||0),0)/60);
  document.getElementById('todayTotal').innerText=`${total}分`;

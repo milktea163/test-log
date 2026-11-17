@@ -242,3 +242,124 @@ body{
   }
 }
 
+/* 教科別の勉強時間注意表示 */
+.subject-attention-summary{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:9px 11px;
+  margin:10px 0 5px;
+  border-radius:12px;
+  background:#fff8e8;
+  color:#94702b;
+  font-size:.75rem;
+  font-weight:900;
+  line-height:1.5;
+  text-align:left;
+}
+
+.subject-attention-summary.has-attention{
+  display:flex;
+}
+
+.attention-icon{
+  flex:none;
+}
+
+.subject-btn.subject-attention{
+  border-style:dashed;
+  border-width:3px;
+  background:#fffaf0;
+  position:relative;
+}
+
+.subject-btn.active.subject-attention{
+  background:#fff0f5;
+  color:var(--text);
+}
+
+.subject-attention-label{
+  display:block;
+  margin-top:4px;
+  color:#a87922;
+  font-size:.62rem;
+  font-weight:900;
+}
+
+@keyframes subjectAttentionBlink{
+  0%,100%{opacity:1}
+  50%{opacity:.55}
+}
+
+.subject-btn.attention-blink{
+  animation:subjectAttentionBlink 1.4s ease-in-out infinite;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .subject-btn.attention-blink{
+    animation:none;
+  }
+}
+
+
+/* 教科別の勉強時間注意表示 */
+.subject-attention-summary{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:9px 11px;
+  margin:10px 0 5px;
+  border-radius:12px;
+  background:#fff8e8;
+  color:#94702b;
+  font-size:.75rem;
+  font-weight:900;
+  line-height:1.5;
+  text-align:left;
+}
+
+.subject-attention-summary.has-attention{
+  display:flex;
+}
+
+.attention-icon{
+  flex:none;
+}
+
+.subject-btn.subject-attention{
+  border-style:dashed;
+  border-width:3px;
+  background:#fffaf0;
+  position:relative;
+}
+
+.subject-btn.active.subject-attention{
+  background:#fff0f5;
+  color:var(--text);
+}
+
+.subject-attention-label{
+  display:block;
+  margin-top:4px;
+  color:#a87922;
+  font-size:.62rem;
+  font-weight:900;
+}
+
+@keyframes subjectAttentionBlink{
+  0%,100%{opacity:1}
+  50%{opacity:.55}
+}
+
+.subject-btn.attention-blink{
+  animation:subjectAttentionBlink 1.4s ease-in-out infinite;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .subject-btn.attention-blink{
+    animation:none;
+  }
+}
+

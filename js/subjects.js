@@ -31,14 +31,6 @@ function renderRecordTestSelect(){
  sel.value=db.testPeriods.some(t=>t.id===prior)?prior:'';
 }
 
-tentionStates[subject.id];
-    const isBehind=Boolean(state?.isBehind);
-
-    b.className =
-  'subject-btn' +
-  (subject.id === currentSubject ? ' active' : '') +
-  (isBehind ? ' behind' : '');
-
 // タイマーで勉強する教科ボタンを表示する
 function renderSubjectButtons(){
   const root=document.getElementById('subject-buttons');

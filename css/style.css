@@ -353,10 +353,6 @@ body{
   50%{opacity:.55}
 }
 
-.subject-btn.attention-blink{
-  animation:subjectAttentionBlink 1.4s ease-in-out infinite;
-}
-
 @media(prefers-reduced-motion:reduce){
   .subject-btn.attention-blink{
     animation:none;

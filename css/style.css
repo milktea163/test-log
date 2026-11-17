@@ -174,3 +174,71 @@ body{
 @media (max-width:699px){
   body{max-width:680px}
 }
+
+
+/* =========================
+   アプリ共通通知デザイン
+========================= */
+
+.app-toast{
+  position:fixed;
+
+  left:50%;
+  bottom:calc(88px + env(safe-area-inset-bottom));
+
+  transform:translate(-50%,15px);
+
+  width:max-content;
+  max-width:calc(100% - 32px);
+
+  padding:13px 22px;
+
+  border-radius:999px;
+
+  color:#fff;
+  font-size:.9rem;
+  font-weight:900;
+  text-align:center;
+
+  box-shadow:0 5px 18px rgba(0,0,0,.15);
+
+  opacity:0;
+  visibility:hidden;
+
+  z-index:9999;
+
+  pointer-events:none;
+
+  transition:
+    opacity .25s ease,
+    transform .25s ease,
+    visibility .25s ease;
+}
+
+/* 保存成功 */
+.app-toast.is-success{
+  background:#36a779;
+}
+
+/* エラー */
+.app-toast.is-error{
+  background:#e36b78;
+}
+
+/* 表示状態 */
+.app-toast.is-visible{
+  opacity:1;
+  visibility:visible;
+  transform:translate(-50%,0);
+}
+
+/* 小さい画面 */
+@media(max-width:390px){
+
+  .app-toast{
+    max-width:calc(100% - 24px);
+    padding:12px 17px;
+    font-size:.82rem;
+  }
+}
+

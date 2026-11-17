@@ -211,7 +211,7 @@ function saveTestSubjectSettings(){
   updateChart();
   renderStrategy();
 
-  alert('このテストの教科を保存しました。');
+  showToast('保存しました！');
 }
 
 function updateSelectedSubjectNote(){

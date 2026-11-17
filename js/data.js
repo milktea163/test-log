@@ -303,3 +303,50 @@ window.addEventListener('beforeunload',function(e){
   }
 
 });
+
+
+/* =========================
+   アプリ共通通知機能
+========================= */
+
+function showToast(message,type='success'){
+
+  // 通知要素を取得
+  let toast=document.getElementById('app-toast');
+
+  // 通知要素がなければ新しく作成
+  if(!toast){
+
+    toast=document.createElement('div');
+
+    toast.id='app-toast';
+    toast.setAttribute('role','status');
+    toast.setAttribute('aria-live','polite');
+
+    document.body.appendChild(toast);
+  }
+
+  // 通知内容と種類を設定
+  toast.textContent=message;
+
+  toast.className='app-toast';
+
+  if(type==='error'){
+    toast.classList.add('is-error');
+  }else{
+    toast.classList.add('is-success');
+  }
+
+  // 表示状態にする
+  toast.classList.add('is-visible');
+
+  // 以前の通知タイマーを解除
+  clearTimeout(window.studyLogToastTimer);
+
+  // 約2.5秒後に非表示にする
+  window.studyLogToastTimer=setTimeout(function(){
+
+    toast.classList.remove('is-visible');
+
+  },2500);
+}

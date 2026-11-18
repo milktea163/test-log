@@ -301,3 +301,254 @@ body{
     animation:none;
   }
 }
+
+
+/* ========================================
+   iPad横向き：レスポンシブレイアウト基盤
+   既存のスマホ・PCデザインを維持する
+======================================== */
+
+@media (min-width: 700px) and
+       (max-width: 1366px) and
+       (orientation: landscape) {
+
+  body {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding-left: 22px;
+    padding-right: 22px;
+    padding-bottom: 100px;
+  }
+
+  .app-header {
+    margin: 10px 0 14px;
+  }
+
+  .app-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .card {
+    padding: 18px;
+    margin-bottom: 14px;
+    border-radius: 24px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .nav {
+    width: calc(100vw - 40px) !important;
+    max-width: 1200px;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    bottom: calc(7px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ========================================
+   ホーム画面：iPad横向き2カラム
+======================================== */
+
+.home-dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.home-dashboard-left,
+.home-dashboard-right {
+  min-width: 0;
+}
+
+/* iPad横向き */
+@media (min-width: 700px) and
+       (max-width: 1366px) and
+       (orientation: landscape) {
+
+  .home-dashboard-grid {
+    grid-template-columns:
+      minmax(0, 1.05fr)
+      minmax(0, 0.95fr);
+
+    gap: 18px;
+    align-items: start;
+  }
+
+  .home-dashboard-left,
+  .home-dashboard-right {
+    min-width: 0;
+  }
+
+  .home-dashboard-grid .card {
+    margin-bottom: 14px;
+    padding: 17px;
+  }
+
+  .home-dashboard-grid .hero-count {
+    margin-bottom: 14px;
+  }
+
+  .home-dashboard-grid .timer-display {
+    font-size: clamp(2.7rem, 4vw, 4rem);
+  }
+
+  .home-dashboard-grid .subject-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* 狭い画面では縦並びに戻す */
+@media (max-width: 699px) {
+  .home-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
+/* ========================================
+   iPad横向き：ホーム画面のコンパクト化
+======================================== */
+
+@media (min-width: 700px) and
+       (max-width: 1366px) and
+       (orientation: landscape) {
+
+  /* 次のテスト：コンパクト表示 */
+  .home-dashboard-grid .hero-count {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "label days"
+      "name days"
+      "date button";
+    align-items: center;
+    gap: 3px 10px;
+    padding: 12px 15px;
+    min-height: 0;
+    margin-bottom: 12px;
+    border-radius: 20px;
+  }
+
+  .home-dashboard-grid .hero-count .label {
+    grid-area: label;
+    font-size: .78rem;
+    text-align: left;
+  }
+
+  .home-dashboard-grid .hero-count .next-test-name {
+    grid-area: name;
+    font-size: .95rem;
+    margin: 0;
+    text-align: left;
+  }
+
+  .home-dashboard-grid .hero-count .days {
+    grid-area: days;
+    font-size: 1.65rem;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .home-dashboard-grid .hero-count .hero-next-date {
+    grid-area: date;
+    font-size: .68rem;
+    margin: 0;
+    text-align: left;
+  }
+
+  .home-dashboard-grid .hero-count .hero-schedule-button {
+    grid-area: button;
+    font-size: .68rem;
+    padding: 7px 9px;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  /* タイマー：操作部分を広く確保 */
+  .home-dashboard-grid #timerCard {
+    padding: 15px;
+  }
+
+  .home-dashboard-grid #timerCard .timer-display {
+    font-size: clamp(2.5rem, 4vw, 3.2rem);
+    margin: 4px 0;
+  }
+
+  .home-dashboard-grid #timerCard .action-hint {
+    font-size: .7rem;
+    margin: 3px 0 6px;
+  }
+
+  .home-dashboard-grid #timerCard .presets {
+    gap: 6px;
+  }
+
+  .home-dashboard-grid #timerCard .preset {
+    padding: 8px 12px;
+    font-size: .78rem;
+  }
+
+  .home-dashboard-grid #timerCard .subject-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin: 9px 0;
+  }
+
+  .home-dashboard-grid #timerCard .subject-btn {
+    min-height: 48px;
+    padding: 6px 3px;
+    font-size: .7rem;
+  }
+
+  .home-dashboard-grid #timerCard .primary {
+    padding: 10px 14px;
+  }
+
+  /* 今日の勉強：教科表示を2列に */
+  .home-dashboard-right #todayBreakdown {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .home-dashboard-right .badge {
+    font-size: .76rem;
+    padding: 9px 5px;
+    overflow-wrap: anywhere;
+  }
+
+  /* 左右のカードの余白を統一 */
+  .home-dashboard-grid .card {
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 20px;
+  }
+
+  .home-dashboard-grid .card-title {
+    font-size: .95rem;
+    margin-bottom: 8px;
+  }
+
+  .home-dashboard-grid .secondary {
+    padding: 9px 12px;
+    font-size: .78rem;
+  }
+}
+
+
+/* ========================================
+   今日の詳細記録：重複する教科表示を非表示
+======================================== */
+
+/* 詳細記録直下の教科別カード */
+#today-record #live-counters {
+  display: none !important;
+}
+
+/* グラフ下の教科別数値カード */
+#today-record #balanceNumbers {
+  display: none !important;
+}

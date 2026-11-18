@@ -100,45 +100,65 @@
 </header>
 
 <main>
+
 <section id="home" class="screen active">
- <div class="hero-count">
-  <div class="label">🚀 次のテスト</div>
-  <div id="nextTestName" class="next-test-name">テスト日程未登録</div>
-  <div id="countdownDisplay" class="days">まずは登録しましょう</div>
-  <div id="nextTestDate" class="hero-next-date"></div>
-  <button class="hero-schedule-button" onclick="showScreen('calendar')">📅 テスト日程を登録</button>
+
+ <div class="home-dashboard-grid">
+
+  <!-- 左側：次のテスト・タイマー -->
+  <div class="home-dashboard-left">
+
+   <div class="hero-count">
+    <div class="label">🚀 次のテスト</div>
+    <div id="nextTestName" class="next-test-name">テスト日程未登録</div>
+    <div id="countdownDisplay" class="days">まずは登録しましょう</div>
+    <div id="nextTestDate" class="hero-next-date"></div>
+    <button class="hero-schedule-button" onclick="showScreen('calendar')">📅 テスト日程を登録</button>
+   </div>
+
+   <div class="card" id="timerCard">
+    <div class="section-title-row"><h2 class="card-title">⏱️ 勉強タイマー</h2><button class="inline-help" onclick="openHelp('timer')">?</button></div>
+    <label for="record-test-select" style="display:block;text-align:left;font-weight:900;margin:8px 0 5px">📋 記録するテスト</label>
+    <select id="record-test-select" onchange="changeRecordTest(this.value)" style="width:100%;margin-bottom:10px"></select>
+    <div id="timer-display" class="timer-display">00:15:00</div>
+    <div class="action-hint">① 時間を選ぶ → ② 教科を選ぶ → ③ START</div>
+    <div id="timer-status" class="timer-status">停止中</div>
+    <div class="presets">
+     <button class="preset" onclick="initTimer(15)">15分</button>
+     <button class="preset" onclick="initTimer(30)">30分</button>
+     <button class="preset" onclick="initTimer(60)">1時間</button>
+    </div>
+    <div id="subject-attention-summary" class="subject-attention-summary" aria-live="polite"></div>
+    <div id="subject-buttons" class="subject-grid"></div>
+    <div id="selected-subject-note" class="selected-note"></div>
+    <button id="start-btn" class="primary full" onclick="toggleTimer()">▶ START</button>
+    <button id="reset-btn" class="secondary full" style="margin-top:10px" onclick="resetTimer()">↺ タイマーをリセット</button>
+   </div>
+
+  </div>
+
+  <!-- 右側：今日の勉強・テスト攻略 -->
+  <div class="home-dashboard-right">
+
+   <div class="card">
+    <div class="section-title-row"><h2 class="card-title">☀️ 今日の勉強</h2><button class="inline-help" onclick="openHelp('home')">?</button></div>
+    <div id="todayTotal" class="stat-big">0分</div>
+    <div id="todayBreakdown" class="breakdown"></div>
+    <div id="todayBreakdownMore" class="small" style="margin-top:6px"></div>
+    <button class="secondary full" style="margin-top:10px" onclick="scrollToId('today-record')">📊 今日の記録を見る</button>
+   </div>
+
+   <div class="card blue">
+    <div class="section-head"><h2 class="card-title">📖 テスト攻略</h2><span id="homeProgressHint" class="chip">まずは設定</span></div>
+    <div id="homeProgress"></div>
+    <button class="secondary full" style="margin-top:10px" onclick="showScreen('strategy')">📖 テスト範囲を登録・確認</button>
+   </div>
+
+  </div>
+
  </div>
 
-
- <div class="card">
-  <div class="section-title-row"><h2 class="card-title">☀️ 今日の勉強</h2><button class="inline-help" onclick="openHelp('home')">?</button></div>
-  <div id="todayTotal" class="stat-big">0分</div>
-  <div id="todayBreakdown" class="breakdown"></div>
-  <div id="todayBreakdownMore" class="small" style="margin-top:6px"></div>
-  <button class="secondary full" style="margin-top:10px" onclick="scrollToId('today-record')">📊 今日の記録を見る</button>
- </div>
-
- <div class="card" id="timerCard">
-  <div class="section-title-row"><h2 class="card-title">⏱️ 勉強タイマー</h2><button class="inline-help" onclick="openHelp('timer')">?</button></div>
-  <label for="record-test-select" style="display:block;text-align:left;font-weight:900;margin:8px 0 5px">📋 記録するテスト</label>
-  <select id="record-test-select" onchange="changeRecordTest(this.value)" style="width:100%;margin-bottom:10px"></select>
-  <div id="timer-display" class="timer-display">00:15:00</div>
-  <div class="action-hint">① 時間を選ぶ → ② 教科を選ぶ → ③ START</div>
-  <div id="timer-status" class="timer-status">停止中</div>
-  <div class="presets"><button class="preset" onclick="initTimer(15)">15分</button><button class="preset" onclick="initTimer(30)">30分</button><button class="preset" onclick="initTimer(60)">1時間</button></div>
-  <div id="subject-attention-summary" class="subject-attention-summary" aria-live="polite"></div>
-  <div id="subject-buttons" class="subject-grid"></div>
-  <div id="selected-subject-note" class="selected-note"></div>
-  <button id="start-btn" class="primary full" onclick="toggleTimer()">▶ START</button>
-  <button id="reset-btn" class="secondary full" style="margin-top:10px" onclick="resetTimer()">↺ タイマーをリセット</button>
- </div>
-
- <div class="card blue">
-  <div class="section-head"><h2 class="card-title">📖 テスト攻略</h2><span id="homeProgressHint" class="chip">まずは設定</span></div>
-  <div id="homeProgress"></div>
-  <button class="secondary full" style="margin-top:10px" onclick="showScreen('strategy')">📖 テスト範囲を登録・確認</button>
- </div>
-
+ <!-- 今日の詳細記録：既存機能を維持 -->
  <div id="today-record" class="card">
   <div class="section-head"><div class="section-title-row"><h2 class="card-title">📊 今日の詳細記録</h2><button class="inline-help" onclick="openHelp('record')">?</button></div><span class="small">1マス＝15分</span></div>
   <div id="live-counters" class="breakdown"></div>
@@ -161,7 +181,9 @@
    <div id="balanceNumbers" class="balance-numbers"></div>
   </div>
  </div>
+
 </section>
+
 
 <section id="strategy" class="screen">
  <div class="card blue">

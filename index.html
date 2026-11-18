@@ -117,25 +117,34 @@
    </div>
 
    <div class="card" id="timerCard">
-    <div class="section-title-row"><h2 class="card-title">⏱️ 勉強タイマー</h2><button class="inline-help" onclick="openHelp('timer')">?</button></div>
-    <label for="record-test-select" style="display:block;text-align:left;font-weight:900;margin:8px 0 5px">📋 記録するテスト</label>
-    <select id="record-test-select" onchange="changeRecordTest(this.value)" style="width:100%;margin-bottom:10px"></select>
-    <div id="timer-display" class="timer-display">00:15:00</div>
-    <div class="action-hint">① 時間を選ぶ → ② 教科を選ぶ → ③ START</div>
-    <div id="timer-status" class="timer-status">停止中</div>
-    <div class="presets">
-     <button class="preset" onclick="initTimer(15)">15分</button>
-     <button class="preset" onclick="initTimer(30)">30分</button>
-     <button class="preset" onclick="initTimer(60)">1時間</button>
-    </div>
-    <div id="subject-attention-summary" class="subject-attention-summary" aria-live="polite"></div>
-    <div id="subject-buttons" class="subject-grid"></div>
-    <div id="selected-subject-note" class="selected-note"></div>
-    <button id="start-btn" class="primary full" onclick="toggleTimer()">▶ START</button>
-    <button id="reset-btn" class="secondary full" style="margin-top:10px" onclick="resetTimer()">↺ タイマーをリセット</button>
-   </div>
-
+  <div class="section-title-row">
+    <h2 class="card-title">⏱️ 勉強タイマー</h2>
+    <button class="inline-help" onclick="openHelp('timer')">?</button>
   </div>
+
+  <select
+    id="record-test-select"
+    aria-label="記録するテスト"
+    onchange="changeRecordTest(this.value)"
+    style="width:100%;margin-bottom:10px">
+  </select>
+
+  <div id="timer-display" class="timer-display">00:15:00</div>
+  <div id="timer-status" class="timer-status">停止中</div>
+
+  <div class="presets">
+    <button class="preset" onclick="initTimer(15)">15分</button>
+    <button class="preset" onclick="initTimer(30)">30分</button>
+    <button class="preset" onclick="initTimer(60)">1時間</button>
+  </div>
+
+  <div id="subject-attention-summary" class="subject-attention-summary" aria-live="polite"></div>
+  <div id="subject-buttons" class="subject-grid"></div>
+  <div id="selected-subject-note" class="selected-note"></div>
+
+  <button id="start-btn" class="primary full" onclick="toggleTimer()">▶ START</button>
+  <button id="reset-btn" class="secondary full" style="margin-top:10px" onclick="resetTimer()">↺ タイマーをリセット</button>
+</div>
 
   <!-- 右側：今日の勉強・テスト攻略 -->
   <div class="home-dashboard-right">
@@ -158,29 +167,92 @@
 
  </div>
 
- <!-- 今日の詳細記録：既存機能を維持 -->
- <div id="today-record" class="card">
-  <div class="section-head"><div class="section-title-row"><h2 class="card-title">📊 今日の詳細記録</h2><button class="inline-help" onclick="openHelp('record')">?</button></div><span class="small">1マス＝15分</span></div>
-  <div id="live-counters" class="breakdown"></div>
-  <div class="time-scroll" style="margin-top:10px"><div id="time-grid-root"></div></div>
-  <div class="balance-section">
-   <div class="balance-title-row"><h3>📊 教科バランス</h3><span class="small">勉強時間をリアルタイム反映</span></div>
-   <div class="balance-range" aria-label="教科バランスの期間">
-    <button type="button" data-balance-range="today" class="active" onclick="setBalanceRange('today')">今日</button>
-    <button type="button" data-balance-range="week" onclick="setBalanceRange('week')">今週</button>
-    <button type="button" data-balance-range="test" onclick="setBalanceRange('test')">テスト期間</button>
-   </div>
-   <div class="chart-box bar-chart-box">
-    <h4>📊 教科ごとの勉強時間</h4>
-    <div id="subjectBalanceBars"></div>
-   </div>
-   <div class="chart-box pie-chart-box">
-    <h4>🥧 勉強時間の割合</h4>
-    <div id="pieWrap"><canvas id="pieChart"></canvas></div>
-   </div>
-   <div id="balanceNumbers" class="balance-numbers"></div>
+ <!-- 今日の詳細記録 -->
+<div id="today-record" class="card">
+
+  <div class="section-head">
+    <div class="section-title-row">
+      <h2 class="card-title">📊 今日の詳細記録</h2>
+      <button class="inline-help" onclick="openHelp('record')">?</button>
+    </div>
+    <span class="small">1マス＝15分</span>
   </div>
- </div>
+
+  <!-- 表示切り替え -->
+  <div class="today-detail-tabs" role="tablist" aria-label="今日の詳細記録の表示">
+    <button
+      type="button"
+      id="today-time-tab"
+      class="today-detail-tab active"
+      role="tab"
+      aria-selected="true"
+      aria-controls="today-time-panel"
+      onclick="switchTodayDetailTab('time')">
+      🕒 時間表
+    </button>
+
+    <button
+      type="button"
+      id="today-chart-tab"
+      class="today-detail-tab"
+      role="tab"
+      aria-selected="false"
+      aria-controls="today-chart-panel"
+      onclick="switchTodayDetailTab('chart')">
+      📊 グラフ
+    </button>
+  </div>
+
+  <!-- 時間表 -->
+  <div
+    id="today-time-panel"
+    class="today-detail-panel active"
+    role="tabpanel"
+    aria-labelledby="today-time-tab">
+
+    <div class="time-scroll" style="margin-top:10px">
+      <div id="time-grid-root"></div>
+    </div>
+
+  </div>
+
+  <!-- グラフ -->
+  <div
+    id="today-chart-panel"
+    class="today-detail-panel"
+    role="tabpanel"
+    aria-labelledby="today-chart-tab"
+    hidden>
+
+    <div class="balance-section">
+
+      <div class="balance-title-row">
+        <h3>📊 教科バランス</h3>
+        <span class="small">勉強時間をリアルタイム反映</span>
+      </div>
+
+      <div class="balance-range" aria-label="教科バランスの期間">
+        <button type="button" data-balance-range="today" class="active" onclick="setBalanceRange('today')">今日</button>
+        <button type="button" data-balance-range="week" onclick="setBalanceRange('week')">今週</button>
+        <button type="button" data-balance-range="test" onclick="setBalanceRange('test')">テスト期間</button>
+      </div>
+
+      <div class="chart-box bar-chart-box">
+        <h4>📊 教科ごとの勉強時間</h4>
+        <div id="subjectBalanceBars"></div>
+      </div>
+
+      <div class="chart-box pie-chart-box">
+        <h4>🥧 勉強時間の割合</h4>
+        <div id="pieWrap">
+          <canvas id="pieChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
 
 </section>
 

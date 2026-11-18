@@ -552,3 +552,66 @@ body{
 #today-record #balanceNumbers {
   display: none !important;
 }
+
+/* ========================================
+   今日の詳細記録：タブ切り替え
+======================================== */
+
+.today-detail-tabs{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:12px 0;
+  padding:5px;
+  background:#fff8fa;
+  border:1px solid #f4dce5;
+  border-radius:16px;
+}
+
+.today-detail-tab{
+  min-height:42px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:#888;
+  font-weight:900;
+  font-size:.85rem;
+  cursor:pointer;
+}
+
+.today-detail-tab.active{
+  background:var(--pink);
+  color:#fff;
+  box-shadow:0 3px 0 var(--pink2);
+}
+
+.today-detail-panel{
+  display:none;
+  min-width:0;
+}
+
+.today-detail-panel.active{
+  display:block;
+}
+
+.today-detail-panel[hidden]{
+  display:none !important;
+}
+
+@media (min-width:700px) and
+       (max-width:1366px) and
+       (orientation:landscape){
+
+  .today-detail-tabs{
+    margin:10px 0;
+  }
+
+  .today-detail-tab{
+    min-height:46px;
+    font-size:.9rem;
+  }
+
+  .today-detail-panel .balance-section{
+    margin-top:10px;
+  }
+}

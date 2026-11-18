@@ -67,3 +67,45 @@ function updateChart(){
    n.innerHTML=active.length?active.map(s=>{const sec=Number(v[s.id]||0),p=total?Math.round(sec/total*100):0;return `<button type="button" class="balance-number" onclick="showChartDetail('${escapeHTML(s.id)}')"><span>${escapeHTML(s.icon||'📚')} ${escapeHTML(s.name)}</span><strong>${formatStudyTime(sec)} · ${p}%</strong></button>`}).join(''):'<div class="balance-empty" style="grid-column:1/-1">この期間の勉強記録はまだありません。</div>';
  }
 }
+
+/* =========================
+   今日の詳細記録：タブ切り替え
+========================= */
+
+function switchTodayDetailTab(tab){
+
+  const timePanel = document.getElementById('today-time-panel');
+  const chartPanel = document.getElementById('today-chart-panel');
+
+  const timeTab = document.getElementById('today-time-tab');
+  const chartTab = document.getElementById('today-chart-tab');
+
+  if(!timePanel || !chartPanel || !timeTab || !chartTab){
+    return;
+  }
+
+  const showTime = tab === 'time';
+
+  timePanel.classList.toggle('active', showTime);
+  chartPanel.classList.toggle('active', !showTime);
+
+  timePanel.hidden = !showTime;
+  chartPanel.hidden = showTime;
+
+  timeTab.classList.toggle('active', showTime);
+  chartTab.classList.toggle('active', !showTime);
+
+  timeTab.setAttribute('aria-selected', String(showTime));
+  chartTab.setAttribute('aria-selected', String(!showTime));
+
+  // グラフを表示したときにサイズを再調整する
+  if(!showTime){
+    updateChart();
+
+    if(pieChart){
+      requestAnimationFrame(() => {
+        pieChart.resize();
+      });
+    }
+  }
+}

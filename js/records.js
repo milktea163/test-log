@@ -294,8 +294,11 @@ function renderTimeGrid(){
  const key=dateKey(),logs=(getRecordTest()?.id?((db.testHistory[getRecordTest().id]||{})[key]||{}):(db.history[key]||{})),root=document.getElementById('time-grid-root'),c=document.getElementById('live-counters');
  let counter='';
  db.subjects.forEach(s=>{counter+=`<div class="badge">${escapeHTML(s.icon)} ${escapeHTML(s.name)}<br><strong style="color:${escapeHTML(s.color)}">${Math.floor((logs[s.id]||0)/60)}分</strong></div>`});
- c.innerHTML=counter||'<div class="badge">記録なし</div>';
+ if(c){
+  c.innerHTML=counter||'<div class="badge">記録なし</div>';
+}
  let h='<table class="time-table"><tr><th>教科</th>'+Array.from({length:15},(_,i)=>`<th>${(i+1)*15}</th>`).join('')+'<th>合計</th></tr>';
  db.subjects.forEach(s=>{const sec=logs[s.id]||0,blocks=Math.floor(sec/900);h+=`<tr><td><strong>${escapeHTML(s.name)}</strong></td>`;for(let j=1;j<=15;j++)h+=`<td><div class="fill" style="background:${j<=blocks?escapeHTML(s.color):'transparent'}"></div></td>`;h+=`<td><strong>${Math.floor(sec/60)}分</strong></td></tr>`});
  root.innerHTML=h+'</table>'
 }
+

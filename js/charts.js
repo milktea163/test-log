@@ -45,22 +45,15 @@ function formatStudyTime(sec){
 }
 function updateChart(){
  const v=getBalanceSeconds(balanceRange);
- const active=db.subjects.filter(s=>(v[s.id]||0)>0);
- const max=Math.max(1,...db.subjects.map(s=>Number(v[s.id]||0)));
- const root=document.getElementById('subjectBalanceBars');
+  const max=Math.max(1,...db.subjects.map(s=>Number(v[s.id]||0)));
+  const root=document.getElementById('subjectBalanceBars');
  if(root){
    root.innerHTML=db.subjects.map(s=>{
      const sec=Number(v[s.id]||0),pct=sec?Math.max(2,Math.round(sec/max*100)):0;
      return `<div class="subject-balance-row" onclick="showChartDetail('${escapeHTML(s.id)}')"><div class="subject-balance-label">${escapeHTML(s.icon||'📚')} ${escapeHTML(s.name)}</div><div class="subject-balance-track"><i style="width:${pct}%;background:${escapeHTML(s.color||'#ffafcc')}"></i></div><div class="subject-balance-min">${formatStudyTime(sec)}</div></div>`;
    }).join('');
  }
- if(pieChart){
-   const labels=active.map(s=>s.name),data=active.map(s=>Math.max(0.01,Number(v[s.id]||0)));
-   pieChart.data.labels=labels.length?labels:['まだ記録がありません'];
-   pieChart.data.datasets[0].data=labels.length?data:[1];
-   pieChart.data.datasets[0].backgroundColor=labels.length?active.map(s=>s.color||'#ffafcc'):['#eee'];
-   pieChart.update('none');
- }
+ 
  const n=document.getElementById('balanceNumbers');
  if(n){
    const total=Object.values(v).reduce((a,b)=>a+b,0);
@@ -101,11 +94,5 @@ function switchTodayDetailTab(tab){
   // グラフを表示したときにサイズを再調整する
   if(!showTime){
     updateChart();
-
-    if(pieChart){
-      requestAnimationFrame(() => {
-        pieChart.resize();
-      });
-    }
   }
 }

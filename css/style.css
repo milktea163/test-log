@@ -615,3 +615,259 @@ body{
     margin-top:10px;
   }
 }
+
+
+/* ========================================
+   ホーム画面：iPad横向き最終レイアウト
+======================================== */
+
+@media (min-width:700px) and
+       (max-width:1366px) and
+       (orientation:landscape){
+
+  /* ホーム画面全体 */
+  #home{
+    height:calc(100svh - 165px);
+    min-height:0;
+    overflow:hidden;
+  }
+
+  /* 左右2カラム */
+  .home-dashboard-grid{
+    height:100%;
+    grid-template-columns:
+      minmax(0,1.05fr)
+      minmax(0,0.95fr);
+    gap:14px;
+    align-items:stretch;
+  }
+
+  .home-dashboard-left,
+  .home-dashboard-right{
+    min-width:0;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  /* 左側：次のテスト */
+  .home-dashboard-left .hero-count{
+    flex:none;
+    margin:0;
+  }
+
+  /* 左側：タイマー */
+  .home-dashboard-left #timerCard{
+    flex:1;
+    min-height:0;
+    margin:0;
+    padding:12px;
+    overflow:hidden;
+  }
+
+  #timerCard .timer-display{
+    font-size:clamp(2.3rem,3.5vw,3.1rem);
+  }
+
+  #timerCard .subject-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:5px;
+    margin:7px 0;
+  }
+
+  #timerCard .subject-btn{
+    min-height:43px;
+    padding:5px 2px;
+    font-size:.68rem;
+  }
+
+  #timerCard .primary,
+  #timerCard .secondary{
+    padding:8px 10px;
+  }
+
+  /* 右側のカード共通 */
+  .home-dashboard-right > .card{
+    margin:0;
+    padding:12px;
+    border-radius:18px;
+  }
+
+  .home-dashboard-right .card-title{
+    font-size:.9rem;
+    margin-bottom:5px;
+  }
+
+  /* 今日の勉強 */
+  .home-dashboard-right #todayTotal{
+    font-size:1.65rem;
+  }
+
+  .home-dashboard-right #todayBreakdown{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:5px;
+    margin-top:5px;
+  }
+
+  .home-dashboard-right #todayBreakdown .badge{
+    padding:6px 3px;
+    font-size:.66rem;
+  }
+
+  /* 今日の詳細記録 */
+  .home-dashboard-right #today-record{
+    flex:1;
+    min-height:0;
+    overflow:hidden;
+  }
+
+  #today-record .today-detail-tabs{
+    margin:5px 0;
+    gap:5px;
+    padding:3px;
+  }
+
+  #today-record .today-detail-tab{
+    min-height:34px;
+    font-size:.78rem;
+  }
+
+  /* 時間表をiPad右カラムに収める */
+  #today-record .time-scroll{
+    overflow-x:hidden;
+  }
+
+  #today-record .time-table{
+    width:100%;
+    min-width:0;
+    font-size:.55rem;
+  }
+
+  #today-record .time-table th,
+  #today-record .time-table td{
+    width:22px;
+    min-width:0;
+    padding:2px 1px;
+  }
+
+  #today-record .time-table th:first-child,
+  #today-record .time-table td:first-child{
+    width:62px;
+  }
+
+  #today-record .time-table th:last-child,
+  #today-record .time-table td:last-child{
+    width:46px;
+  }
+
+  #today-record .time-table .fill{
+    height:12px;
+  }
+
+  /* 棒グラフをコンパクトに */
+  #today-record .balance-section{
+    margin-top:4px;
+  }
+
+  #today-record .subject-balance-row{
+    gap:5px;
+    margin:4px 0;
+    padding:4px 0;
+  }
+
+  #today-record .subject-balance-label{
+    font-size:.68rem;
+  }
+
+  #today-record .subject-balance-min{
+    font-size:.65rem;
+  }
+
+  #today-record .subject-balance-track{
+    height:9px;
+  }
+
+  /* テスト攻略 */
+  .home-dashboard-right > .card.blue{
+    flex:none;
+  }
+
+  .home-dashboard-right .progress-summary{
+    padding:7px;
+    margin-top:5px;
+  }
+
+  .home-dashboard-right .secondary{
+    padding:8px 10px;
+    font-size:.73rem;
+  }
+}
+
+/* 高さが低いiPad横向き画面 */
+@media (min-width:700px) and
+       (max-width:1366px) and
+       (orientation:landscape) and
+       (max-height:800px){
+
+  #home{
+    height:calc(100svh - 150px);
+  }
+
+  .home-dashboard-left,
+  .home-dashboard-right{
+    gap:7px;
+  }
+
+  .home-dashboard-right > .card{
+    padding:9px;
+  }
+
+  #timerCard .timer-display{
+    font-size:2.3rem;
+  }
+
+  #timerCard .subject-btn{
+    min-height:38px;
+  }
+}
+
+/* 教科別棒グラフ：グラフ部分だけスクロール */
+.subject-balance-scroll {
+  max-height: 260px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* iPad横向き */
+@media (min-width:700px) and
+       (max-width:1366px) and
+       (orientation:landscape) {
+
+  .subject-balance-scroll {
+    max-height: clamp(130px, 22vh, 220px);
+  }
+}
+
+
+/* ========================================
+   iPad横向き：ホーム右側パネルの内部スクロール
+======================================== */
+
+@media (min-width:700px) and
+       (max-width:1366px) and
+       (orientation:landscape) {
+
+  .home-dashboard-right {
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 10px;
+  }
+
+}

@@ -1,6 +1,6 @@
 let currentSubject=db.subjects[0]?.id||'';
 let timerSeconds=900,presetSeconds=900,timerInterval=null,isRunning=false;
-let calViewDate=new Date(),selectedTaskPeriodId='default',audioCtx=null,radarChart=null,pieChart=null,detailTestId=null,balanceRange='today';
+let calViewDate=new Date(),selectedTaskPeriodId='default',audioCtx=null,radarChart=null,detailTestId=null,balanceRange='today';
 let sessionRecordedSeconds=0;
 let timerStartedAt=null;
 let timerCompletedCycles=0;
@@ -62,12 +62,6 @@ function boot(){
  }
  document.getElementById('countdown-period-select').value=db.countdownDisplayPeriod;
  renderRecordTestSelect();renderTestSubjectSettings();renderSubjectButtons();renderSubjectSettings();renderHomeStats();renderTimeGrid();renderCalendar();renderStrategy();renderReflectionList();updateCountdown();showFirstGuide();save();
- if(window.Chart){
-  const pieEl=document.getElementById('pieChart');
-  if(pieEl){
-   pieChart=new Chart(pieEl,{type:'pie',data:{labels:[],datasets:[{data:[],backgroundColor:[]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}});
-  }
- }
  updateChart();
  document.querySelector('.nav button[data-screen="home"]').classList.add('active');
 }

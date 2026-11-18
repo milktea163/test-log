@@ -146,115 +146,123 @@
   <button id="reset-btn" class="secondary full" style="margin-top:10px" onclick="resetTimer()">↺ タイマーをリセット</button>
 </div>
 
-  <!-- 右側：今日の勉強・テスト攻略 -->
+
+  </div><!-- home-dashboard-left -->
+
+  <!-- 右側：今日の勉強・詳細記録・テスト攻略 -->
   <div class="home-dashboard-right">
 
-   <div class="card">
-    <div class="section-title-row"><h2 class="card-title">☀️ 今日の勉強</h2><button class="inline-help" onclick="openHelp('home')">?</button></div>
-    <div id="todayTotal" class="stat-big">0分</div>
-    <div id="todayBreakdown" class="breakdown"></div>
-    <div id="todayBreakdownMore" class="small" style="margin-top:6px"></div>
-    <button class="secondary full" style="margin-top:10px" onclick="scrollToId('today-record')">📊 今日の記録を見る</button>
-   </div>
-
-   <div class="card blue">
-    <div class="section-head"><h2 class="card-title">📖 テスト攻略</h2><span id="homeProgressHint" class="chip">まずは設定</span></div>
-    <div id="homeProgress"></div>
-    <button class="secondary full" style="margin-top:10px" onclick="showScreen('strategy')">📖 テスト範囲を登録・確認</button>
-   </div>
-
-  </div>
-
- </div>
-
- <!-- 今日の詳細記録 -->
-<div id="today-record" class="card">
-
-  <div class="section-head">
-    <div class="section-title-row">
-      <h2 class="card-title">📊 今日の詳細記録</h2>
-      <button class="inline-help" onclick="openHelp('record')">?</button>
-    </div>
-    <span class="small">1マス＝15分</span>
-  </div>
-
-  <!-- 表示切り替え -->
-  <div class="today-detail-tabs" role="tablist" aria-label="今日の詳細記録の表示">
-    <button
-      type="button"
-      id="today-time-tab"
-      class="today-detail-tab active"
-      role="tab"
-      aria-selected="true"
-      aria-controls="today-time-panel"
-      onclick="switchTodayDetailTab('time')">
-      🕒 時間表
-    </button>
-
-    <button
-      type="button"
-      id="today-chart-tab"
-      class="today-detail-tab"
-      role="tab"
-      aria-selected="false"
-      aria-controls="today-chart-panel"
-      onclick="switchTodayDetailTab('chart')">
-      📊 グラフ
-    </button>
-  </div>
-
-  <!-- 時間表 -->
-  <div
-    id="today-time-panel"
-    class="today-detail-panel active"
-    role="tabpanel"
-    aria-labelledby="today-time-tab">
-
-    <div class="time-scroll" style="margin-top:10px">
-      <div id="time-grid-root"></div>
-    </div>
-
-  </div>
-
-  <!-- グラフ -->
-  <div
-    id="today-chart-panel"
-    class="today-detail-panel"
-    role="tabpanel"
-    aria-labelledby="today-chart-tab"
-    hidden>
-
-    <div class="balance-section">
-
-      <div class="balance-title-row">
-        <h3>📊 教科バランス</h3>
-        <span class="small">勉強時間をリアルタイム反映</span>
+    <!-- 今日の勉強 -->
+    <div class="card">
+      <div class="section-title-row">
+        <h2 class="card-title">☀️ 今日の勉強</h2>
+        <button class="inline-help" onclick="openHelp('home')">?</button>
       </div>
 
-      <div class="balance-range" aria-label="教科バランスの期間">
-        <button type="button" data-balance-range="today" class="active" onclick="setBalanceRange('today')">今日</button>
-        <button type="button" data-balance-range="week" onclick="setBalanceRange('week')">今週</button>
-        <button type="button" data-balance-range="test" onclick="setBalanceRange('test')">テスト期間</button>
+      <div id="todayTotal" class="stat-big">0分</div>
+      <div id="todayBreakdown" class="breakdown"></div>
+      <div id="todayBreakdownMore" class="small" style="margin-top:6px"></div>
+    </div>
+
+    <!-- 今日の詳細記録 -->
+    <div id="today-record" class="card">
+
+      <div class="section-head">
+        <div class="section-title-row">
+          <h2 class="card-title">📊 今日の詳細記録</h2>
+          <button class="inline-help" onclick="openHelp('record')">?</button>
+        </div>
+        <span class="small">1マス＝15分</span>
       </div>
+
+      <!-- 時間表／グラフ切り替え -->
+      <div class="today-detail-tabs" role="tablist" aria-label="今日の詳細記録の表示">
+
+        <button
+          type="button"
+          id="today-time-tab"
+          class="today-detail-tab active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="today-time-panel"
+          onclick="switchTodayDetailTab('time')">
+          🕒 時間表
+        </button>
+
+        <button
+          type="button"
+          id="today-chart-tab"
+          class="today-detail-tab"
+          role="tab"
+          aria-selected="false"
+          aria-controls="today-chart-panel"
+          onclick="switchTodayDetailTab('chart')">
+          📊 棒グラフ
+        </button>
+
+      </div>
+
+      <!-- 15分単位の時間表 -->
+      <div
+        id="today-time-panel"
+        class="today-detail-panel active"
+        role="tabpanel"
+        aria-labelledby="today-time-tab">
+
+        <div class="time-scroll" style="margin-top:10px">
+          <div id="time-grid-root"></div>
+        </div>
+
+      </div>
+
+      <!-- 教科別棒グラフ -->
+      <div
+        id="today-chart-panel"
+        class="today-detail-panel"
+        role="tabpanel"
+        aria-labelledby="today-chart-tab"
+        hidden>
+
+   　　 <div class="balance-section">
+
+  　　　<div class="balance-range" aria-label="教科バランスの期間">
+            <button type="button" data-balance-range="today" class="active" onclick="setBalanceRange('today')">今日</button>
+            <button type="button" data-balance-range="week" onclick="setBalanceRange('week')">今週</button>
+            <button type="button" data-balance-range="test" onclick="setBalanceRange('test')">テスト期間</button>
+          </div>
 
       <div class="chart-box bar-chart-box">
-        <h4>📊 教科ごとの勉強時間</h4>
-        <div id="subjectBalanceBars"></div>
-      </div>
-
-      <div class="chart-box pie-chart-box">
-        <h4>🥧 勉強時間の割合</h4>
-        <div id="pieWrap">
-          <canvas id="pieChart"></canvas>
-        </div>
+  <div class="subject-balance-scroll">
+    <div id="subjectBalanceBars"></div>
+  </div>
+</div>    
       </div>
 
     </div>
-  </div>
 
-</div>
+    <!-- テスト攻略 -->
+    <div class="card blue">
+      <div class="section-head">
+        <h2 class="card-title">📖 テスト攻略</h2>
+        <span id="homeProgressHint" class="chip">まずは設定</span>
+      </div>
+
+      <div id="homeProgress"></div>
+
+      <button
+        class="secondary full"
+        style="margin-top:10px"
+        onclick="showScreen('strategy')">
+        📖 テスト範囲を登録・確認
+      </button>
+    </div>
+
+  </div><!-- home-dashboard-right -->
+
+ </div><!-- home-dashboard-grid -->
 
 </section>
+ 
 
 
 <section id="strategy" class="screen">

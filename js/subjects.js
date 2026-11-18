@@ -69,17 +69,12 @@ function renderSubjectButtons(){
       summary.classList.add('has-attention');
 
     }else if(attentionTest){
-      summary.innerHTML=
-        `<span>${escapeHTML(attentionTest.name||'次のテスト')}に向けて、`+
-        `現在、勉強時間に大きな偏りはありません。</span>`;
+  summary.innerHTML=
+    `<span>${escapeHTML(attentionTest.name||'次のテスト')}に向けて、`+
+    `現在、勉強時間に大きな偏りはありません。</span>`;
 
-      summary.classList.add('has-attention');
-      summary.classList.remove('has-attention');
-
-    }else{
-      summary.innerHTML='';
-      summary.classList.remove('has-attention');
-    }
+  summary.classList.add('has-attention');
+}
   }
 
   // タイマーの教科ボタン

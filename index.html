@@ -305,17 +305,15 @@
   <div id="test-subject-settings" class="help-grid" style="margin-top:12px"></div>
   <button class="primary full" style="margin-top:12px" onclick="saveTestSubjectSettings()">このテストの教科を保存</button>
  </div>
- <div class="card">
-  <div class="calendar-head"><button class="preset" onclick="changeMonth(-1)">◀</button><div class="section-title-row"><h2 id="cal-month-title" class="card-title" style="margin:0"></h2><button class="inline-help" onclick="openHelp('calendar')">?</button></div><button class="preset" onclick="changeMonth(1)">▶</button></div>
+   <div class="card" id="calendarDisplayCard">
+  
+   </div>
+    <button class="preset" onclick="changeMonth(-1)">◀</button><div class="section-title-row"><h2 id="cal-month-title" class="card-title" style="margin:0"></h2><button class="inline-help" onclick="openHelp('calendar')">?</button></div><button class="preset" onclick="changeMonth(1)">▶</button></div>
   <div class="weekdays" style="margin-top:10px"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
   <div id="cal-grid" class="calendar-grid"></div>
   <details style="margin-top:14px"><summary>🎨 カレンダーの色について</summary><p class="small">🔵 テスト期間　🩷 1週間前　🟡 2週間前　🟢 3週間前　● 勉強記録あり</p></details>
  </div>
- <div class="card">
-  <h2 class="card-title">📝 テストを振り返る</h2>
-  <p class="small">テスト期間ごとの勉強時間と、教科別の振り返りを確認できます。</p>
-  <button class="primary full" onclick="openReportModal()">テストを振り返る →</button>
- </div>
+ 
 </section>
 
 <section id="reflection" class="screen">

@@ -1352,3 +1352,147 @@ body{
   }
 }
 
+
+/* ========================================
+   カレンダー画面：iPad横向き・PCレイアウト
+======================================== */
+
+@media (min-width: 760px) and (orientation: landscape) {
+
+  /* カレンダー画面を2列構成にする */
+  #calendar.screen.active {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  /* カードの余白を統一 */
+  #calendar > .card {
+    min-width: 0;
+    margin-bottom: 0;
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  /* 日程登録・教科設定を横並び */
+  #calendar #testScheduleCard,
+  #calendar #testSubjectsCard {
+    grid-column: auto;
+  }
+
+  /* カレンダーと振り返りは全幅 */
+  #calendar > .card:nth-child(3),
+  #calendar > .card:nth-child(4) {
+    grid-column: 1 / -1;
+  }
+
+  /* 日程の開始日・終了日を横並び */
+  #calendar #testScheduleCard .schedule-form {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  /* 教科設定を2列にする */
+  #calendar #testSubjectsCard .help-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  /* 教科カードの文字切れを防ぐ */
+  #calendar #testSubjectsCard .help-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* カレンダーの日付を見やすくする */
+  #calendar .calendar-grid {
+    gap: 8px;
+  }
+
+  #calendar .cal-day {
+    min-height: 48px;
+    font-size: .95rem;
+  }
+
+}
+
+
+/* ========================================
+   カレンダー：左寄せ・配置修正・コンパクト化
+======================================== */
+
+#calendarDisplayCard {
+  width: 100%;
+  max-width: none;
+  justify-self: stretch;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+}
+
+/* 前月・年月・翌月を横一列に整列 */
+#calendarDisplayCard .calendar-head {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+#calendarDisplayCard .calendar-head .preset {
+  width: 100%;
+  min-width: 0;
+  padding: 9px 4px;
+}
+
+#calendarDisplayCard .calendar-head .section-title-row {
+  justify-content: center;
+  min-width: 0;
+}
+
+/* 曜日と日付を同じ幅でそろえる */
+#calendarDisplayCard .weekdays,
+#calendarDisplayCard .calendar-grid {
+  width: 100%;
+  box-sizing: border-box;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+/* カレンダーを少しコンパクトに */
+#calendarDisplayCard .calendar-grid {
+  gap: 6px;
+  margin-top: 8px;
+}
+
+#calendarDisplayCard .cal-day {
+  min-height: 0;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  font-size: .85rem;
+}
+
+#calendarDisplayCard .weekdays {
+  font-size: .8rem;
+}
+
+/* タブレット・PC */
+@media (min-width: 760px) and (orientation: landscape) {
+  #calendarDisplayCard {
+    padding: 14px;
+  }
+
+  #calendarDisplayCard .calendar-grid {
+    gap: 7px;
+  }
+
+  #calendarDisplayCard .cal-day {
+    font-size: .9rem;
+  }
+}
+

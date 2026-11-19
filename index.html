@@ -164,6 +164,7 @@
       <div id="todayBreakdownMore" class="small" style="margin-top:6px"></div>
     </div>
 
+    
     <!-- 今日の詳細記録 -->
     <div id="today-record" class="card">
 
@@ -208,8 +209,8 @@
         class="today-detail-panel active"
         role="tabpanel"
         aria-labelledby="today-time-tab">
-　　　　　<div class="time-scroll" style="margin-top:10px"></div>
-</div>
+
+        <div class="time-scroll" style="margin-top:10px">
           <div id="time-grid-root"></div>
         </div>
 
@@ -223,24 +224,26 @@
         aria-labelledby="today-chart-tab"
         hidden>
 
-   　　 <div class="balance-section">
+        <div class="balance-section">
 
-  　　　<div class="balance-range" aria-label="教科バランスの期間">
+          <div class="balance-range" aria-label="教科バランスの期間">
             <button type="button" data-balance-range="today" class="active" onclick="setBalanceRange('today')">今日</button>
             <button type="button" data-balance-range="week" onclick="setBalanceRange('week')">今週</button>
             <button type="button" data-balance-range="test" onclick="setBalanceRange('test')">テスト期間</button>
           </div>
 
-      <div class="chart-box bar-chart-box">
-  <div class="subject-balance-scroll">
-    <div id="subjectBalanceBars"></div>
-  </div>
-</div>    
+          <div class="chart-box bar-chart-box">
+            <div class="subject-balance-scroll">
+              <div id="subjectBalanceBars"></div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
 
-        </div><!-- 今日の詳細記録カードを閉じる -->
     
 
     <!-- テスト攻略 -->

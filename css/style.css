@@ -854,20 +854,71 @@ body{
 
 
 /* ========================================
-   iPad横向き：ホーム右側パネルの内部スクロール
+   iPad横向き：ホーム右側パネルの表示調整
 ======================================== */
 
 @media (min-width:700px) and
        (max-width:1366px) and
        (orientation:landscape) {
 
+  /* 右側全体はスクロールさせない */
   .home-dashboard-right {
+    overflow: visible;
+    padding-bottom: 0;
+    min-height: 0;
+  }
+
+  /* 今日の勉強カード */
+  .home-dashboard-right > .card:first-child {
+    flex: 0 0 auto;
+  }
+
+  /* 今日の詳細記録に残りの高さを割り当てる */
+  .home-dashboard-right > #today-record {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* テスト攻略カードは常に必要な高さを確保 */
+  .home-dashboard-right > .card.blue {
+    flex: 0 0 auto;
+  }
+
+  /* 棒グラフの上部余白を削減 */
+  #today-record #today-chart-panel .balance-section {
+    margin-top: 0;
+  }
+
+  #today-record #today-chart-panel .balance-range {
+    padding-top: 0;
+    padding-bottom: 3px;
+    margin-top: 0;
+  }
+
+  /* グラフの外側の余白を削減 */
+  #today-record #today-chart-panel .chart-box {
+    margin-top: 2px;
+  }
+
+  #today-record #today-chart-panel .bar-chart-box {
+    padding: 7px 8px;
+  }
+
+  /* 教科別グラフ部分だけスクロール */
+  #today-record #today-chart-panel .subject-balance-scroll {
+    max-height: clamp(90px, 17vh, 135px);
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    padding-bottom: 10px;
   }
 
+  /* 棒グラフの行間を少しコンパクトに */
+  #today-record #today-chart-panel .subject-balance-row {
+    margin: 3px 0;
+    padding: 3px 0;
+  }
 }
+

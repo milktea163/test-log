@@ -922,3 +922,110 @@ body{
   }
 }
 
+
+/* ========================================
+   iPad横向き：テスト攻略カードの高さ調整
+======================================== */
+
+@media (min-width:700px) and
+       (max-width:1366px) and
+       (orientation:landscape) {
+
+  /* 右側のカード間隔を少し調整 */
+  .home-dashboard-right {
+    gap: 8px;
+  }
+
+  /* 今日の勉強カードは必要な高さを維持 */
+  .home-dashboard-right > .card:first-child {
+    flex: 0 0 auto;
+  }
+
+  /* 詳細記録は残りの高さを使用 */
+  .home-dashboard-right > #today-record {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  /* テスト攻略カードは必要に応じて縮小可能にする */
+  .home-dashboard-right > .card.blue {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+
+/* ========================================
+   iPad横向き：詳細記録とテスト攻略を分離
+======================================== */
+
+@media (min-width:700px) and
+       (max-width:1366px) and
+       (orientation:landscape) {
+
+  /* 右側の3つのカードを独立して配置 */
+  .home-dashboard-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: visible;
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  .home-dashboard-right > .card {
+    margin: 0;
+    min-width: 0;
+  }
+
+  /* 今日の勉強 */
+  .home-dashboard-right > .card:first-child {
+    flex: 0 0 auto;
+  }
+
+  /* 今日の詳細記録 */
+  .home-dashboard-right > #today-record {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* テスト攻略 */
+  .home-dashboard-right > .card.blue {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* グラフの上部の余白を詰める */
+  #today-record #today-chart-panel .balance-section {
+    margin-top: 0;
+  }
+
+  #today-record #today-chart-panel .balance-range {
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 2px;
+  }
+
+  #today-record #today-chart-panel .chart-box {
+    margin-top: 2px;
+  }
+
+  #today-record #today-chart-panel .bar-chart-box {
+    padding: 5px 8px;
+  }
+
+  /* 棒グラフの教科一覧だけ内部スクロール */
+  #today-record #today-chart-panel .subject-balance-scroll {
+    max-height: clamp(90px, 17vh, 135px);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+

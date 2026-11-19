@@ -1029,3 +1029,326 @@ body{
   }
 }
 
+
+/* ========================================
+   テスト攻略画面：新レイアウト
+   ======================================== */
+
+/* 全体 */
+#strategy #task-container {
+  width: 100%;
+  min-width: 0;
+}
+
+#strategy .strategy-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  width: 100%;
+  align-items: start;
+}
+
+/* 左側：教科一覧 */
+#strategy .strategy-subject-panel,
+#strategy .strategy-workspace {
+  min-width: 0;
+  background: #fff;
+  border: 1px solid #f2dce5;
+  border-radius: 20px;
+  padding: 13px;
+}
+
+#strategy .strategy-panel-title {
+  margin: 0 0 10px;
+  font-size: .95rem;
+  font-weight: 900;
+  text-align: left;
+  color: var(--pink2);
+}
+
+#strategy .strategy-subject-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+#strategy .strategy-subject-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  min-height: 82px;
+  padding: 9px;
+  border: 2px solid #eee;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+
+#strategy .strategy-subject-card.active {
+  background: #fff0f5;
+  border-color: var(--pink2);
+  box-shadow: 0 2px 0 var(--pink);
+}
+
+#strategy .strategy-subject-name {
+  width: 100%;
+  font-size: .78rem;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+#strategy .strategy-subject-percent {
+  font-size: .95rem;
+  font-weight: 900;
+  color: var(--pink2);
+}
+
+#strategy .strategy-subject-count {
+  font-size: .68rem;
+  color: #888;
+}
+
+#strategy .strategy-mini-bar {
+  display: block;
+  width: 100%;
+  height: 5px;
+  overflow: hidden;
+  background: #eee;
+  border-radius: 99px;
+}
+
+#strategy .strategy-mini-bar i {
+  display: block;
+  height: 100%;
+  background: var(--pink);
+  border-radius: 99px;
+}
+
+/* 右側：学習範囲 */
+#strategy .strategy-workspace-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #f1e7eb;
+  text-align: left;
+}
+
+#strategy .strategy-workspace-head h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--pink2);
+}
+
+#strategy .strategy-workspace-head .small {
+  margin: 5px 0 0;
+}
+
+#strategy .strategy-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#strategy .strategy-task-item {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+  padding: 7px;
+  background: #fff9fb;
+  border: 1px solid #f3e3e9;
+  border-radius: 12px;
+}
+
+#strategy .strategy-task-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 29px;
+  height: 29px;
+  border-radius: 9px;
+  background: #ffe4ed;
+  color: var(--pink2);
+  font-size: .75rem;
+  font-weight: 900;
+}
+
+#strategy .strategy-task-item input[type="text"] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 7px 9px;
+  border: 1px solid #e8dfe3;
+  border-radius: 9px;
+  background: #fff;
+  font-size: .82rem;
+}
+
+#strategy .strategy-task-item .checks {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  flex: none;
+}
+
+#strategy .strategy-task-item .check {
+  flex: none;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border: 2px solid var(--pink);
+  border-radius: 7px;
+  background: #fff;
+  cursor: pointer;
+}
+
+#strategy .strategy-task-item .check.checked {
+  background: var(--pink);
+}
+
+#strategy .strategy-task-item .check.checked::after {
+  content: "✓";
+  display: block;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 23px;
+  text-align: center;
+}
+
+/* 全体進捗 */
+#strategy #strategy-progress {
+  padding: 12px;
+}
+
+#strategy .strategy-total-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  font-size: .9rem;
+}
+
+#strategy .strategy-total-head strong:last-child {
+  color: var(--pink2);
+  font-size: 1.1rem;
+}
+
+/* iPad横向き・PC */
+@media (min-width: 700px) and (orientation: landscape) {
+
+  #strategy .strategy-layout {
+    grid-template-columns:
+      minmax(250px, .82fr)
+      minmax(0, 1.18fr);
+    gap: 14px;
+  }
+
+  #strategy .strategy-subject-panel,
+  #strategy .strategy-workspace {
+    padding: 12px;
+  }
+
+  #strategy .strategy-subject-card {
+    min-height: 76px;
+    padding: 8px;
+  }
+
+  #strategy .strategy-task-list {
+    gap: 7px;
+  }
+
+  #strategy .strategy-task-item {
+    gap: 8px;
+    padding: 6px;
+  }
+}
+
+/* iPad縦向き */
+@media (min-width: 700px) and (orientation: portrait) {
+
+  #strategy .strategy-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  #strategy .strategy-subject-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #strategy .strategy-subject-card {
+    min-height: 76px;
+  }
+
+  #strategy .strategy-workspace {
+    padding: 16px;
+  }
+}
+
+/* スマートフォン */
+@media (max-width: 699px) {
+
+  #strategy .strategy-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 11px;
+  }
+
+  #strategy .strategy-subject-panel,
+  #strategy .strategy-workspace {
+    padding: 11px;
+    border-radius: 16px;
+  }
+
+  #strategy .strategy-subject-card {
+    min-height: 76px;
+    padding: 8px;
+  }
+
+  #strategy .strategy-subject-name {
+    font-size: .73rem;
+  }
+
+  #strategy .strategy-task-item {
+    grid-template-columns: 27px minmax(0, 1fr) auto;
+    gap: 5px;
+    padding: 6px;
+  }
+
+  #strategy .strategy-task-number {
+    width: 26px;
+    height: 26px;
+    font-size: .7rem;
+  }
+
+  #strategy .strategy-task-item input[type="text"] {
+    height: 38px;
+    padding: 6px;
+    font-size: .78rem;
+  }
+
+  #strategy .strategy-task-item .checks {
+    gap: 3px;
+  }
+
+  #strategy .strategy-task-item .check {
+    width: 25px;
+    height: 25px;
+  }
+}
+

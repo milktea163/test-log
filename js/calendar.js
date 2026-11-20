@@ -228,7 +228,13 @@ function renderMonthlyStudySummary(){
 }
 
 function changeMonth(n){
-  calViewDate.setMonth(calViewDate.getMonth()+n);
+
+  const year=calViewDate.getFullYear();
+  const month=calViewDate.getMonth()+n;
+
+  // 必ず移動先の月の1日を基準にする
+  calViewDate=new Date(year,month,1);
+
   renderCalendar();
 }
 
@@ -500,3 +506,15 @@ function saveReflection(id,sid,v){
 }
 
 function closeTestDetail(){document.getElementById('testDetailModal').classList.remove('open');showScreen('reflection')}
+// Escキーで日程登録モーダルを閉じる
+document.addEventListener('keydown',function(event){
+
+  if(event.key!=='Escape')return;
+
+  const modal=document.getElementById('scheduleModal');
+
+  if(modal?.classList.contains('open')){
+    closeScheduleModal();
+  }
+
+});

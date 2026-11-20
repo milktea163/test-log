@@ -296,14 +296,28 @@
     <div class="card" id="calendarDisplayCard">
 
       <div class="calendar-head">
-        <button class="preset" onclick="changeMonth(-1)">◀</button>
+        <button
+  type="button"
+  class="preset"
+  onclick="changeMonth(-1)"
+  aria-label="前の月を表示"
+  title="前の月を表示">
+  ◀
+</button>
 
         <div class="section-title-row">
           <h2 id="cal-month-title" class="card-title" style="margin:0"></h2>
           <button class="inline-help" onclick="openHelp('calendar')">?</button>
         </div>
 
-        <button class="preset" onclick="changeMonth(1)">▶</button>
+        <button
+  type="button"
+  class="preset"
+  onclick="changeMonth(1)"
+  aria-label="次の月を表示"
+  title="次の月を表示">
+  ▶
+</button>
       </div>
 
       <div class="weekdays" style="margin-top:10px">

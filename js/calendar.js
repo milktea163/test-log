@@ -178,7 +178,27 @@ function renderCalendar(){
  document.getElementById('cal-month-title').innerText=`${y}年 ${m+1}月`;
  const first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate();for(let i=0;i<first;i++)grid.appendChild(document.createElement('div'));
  for(let d=1;d<=last;d++){
-  const dt=new Date(y,m,d),key=dateKey(dt),el=document.createElement('button');el.className='cal-day';el.textContent=d;el.onclick=()=>openDayDetail(key);
+  const dt=new Date(y,m,d);
+const key=dateKey(dt);
+const el=document.createElement('button');
+
+el.type='button';
+el.className='cal-day';
+el.textContent=d;
+el.onclick=()=>openDayDetail(key);
+
+// 読み上げ機能向けの日付情報
+const weekdays=['日','月','火','水','木','金','土'];
+
+el.setAttribute(
+  'aria-label',
+  `${y}年${m+1}月${d}日（${weekdays[dt.getDay()]}曜日）の勉強記録を表示`
+);
+
+// 今日の日付を読み上げ機能に伝える
+if(key===dateKey()){
+  el.setAttribute('aria-current','date');
+}
   if(key===dateKey())el.classList.add('today');if(db.history[key]||Object.values(db.testHistory||{}).some(th=>th[key]))el.classList.add('has-data');
   let test=false,cls='';
   db.testPeriods.forEach(t=>{const s=parseDateKey(t.start),e=parseDateKey(t.end);s.setHours(0,0,0,0);e.setHours(23,59,59,999);const diff=Math.round((dt-s)/86400000);if(dt>=s&&dt<=e)test=true;else if(diff>=-7&&diff<=-1&&db.countdownDisplayPeriod>=1)cls='w1';else if(diff>=-14&&diff<=-8&&db.countdownDisplayPeriod>=2&&!cls)cls='w2';else if(diff>=-21&&diff<=-15&&db.countdownDisplayPeriod>=3&&!cls)cls='w3'});

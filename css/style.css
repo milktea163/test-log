@@ -2197,3 +2197,12 @@ body{
   }
 
 }
+
+/* 今月の勉強まとめ：集計対象の説明 */
+.monthly-study-note {
+  margin: 0 0 12px;
+  color: #999;
+  font-size: .72rem;
+  line-height: 1.6;
+  text-align: left;
+}

@@ -110,13 +110,66 @@ function renderNextTestInfo(){
   `;
 }
 
-/* 日程登録モーダル */
+/* ========================================
+   日程登録モーダル：操作性改善
+======================================== */
+
+// モーダルを開く前のフォーカス位置を保存
+let scheduleModalReturnFocus = null;
+
+// モーダルを開く
 function openScheduleModal(){
-  document.getElementById('scheduleModal')?.classList.add('open');
+
+  const modal=document.getElementById('scheduleModal');
+  const nameInput=document.getElementById('test-period-name');
+
+  // 開く前に操作していたボタンを記録
+  const active=document.activeElement;
+
+  scheduleModalReturnFocus=
+    active instanceof HTMLElement && active!==document.body
+      ?active
+      :null;
+
+  modal?.classList.add('open');
+
+  // 終了日の選択範囲を更新
+  updateScheduleEndMin();
+
+  // テスト名の入力欄にフォーカス
+  nameInput?.focus();
 }
 
+// モーダルを閉じる
 function closeScheduleModal(){
-  document.getElementById('scheduleModal')?.classList.remove('open');
+
+  const modal=document.getElementById('scheduleModal');
+
+  modal?.classList.remove('open');
+
+  // 開く前のボタンにフォーカスを戻す
+  if(scheduleModalReturnFocus?.isConnected){
+    scheduleModalReturnFocus.focus();
+  }
+
+  scheduleModalReturnFocus=null;
+}
+
+// 開始日に合わせて終了日の選択範囲を更新
+function updateScheduleEndMin(){
+
+  const start=document.getElementById('test-start');
+  const end=document.getElementById('test-end');
+
+  if(!start||!end)return;
+
+  // 終了日は開始日以降に限定
+  end.min=start.value||'';
+
+  // 開始日より前の終了日が入力済みなら解除
+  if(start.value&&end.value&&end.value<start.value){
+    end.value='';
+  }
 }
 
 function renderCalendar(){

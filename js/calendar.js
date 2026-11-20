@@ -231,13 +231,104 @@ function changeMonth(n){
   calViewDate.setMonth(calViewDate.getMonth()+n);
   renderCalendar();
 }
+
 function openDayDetail(key){
- const logs={...(db.history[key]||{})},d=parseDateKey(key),total=Math.floor(totalForDate(key)/60);Object.values(db.testHistory||{}).forEach(th=>Object.entries(th[key]||{}).forEach(([sid,sec])=>logs[sid]=(Number(logs[sid])||0)+(Number(sec)||0)));
- let month=0;Object.keys(db.history).forEach(k=>{const x=parseDateKey(k);if(x.getFullYear()===d.getFullYear()&&x.getMonth()===d.getMonth())month+=totalForDate(k)});
- let h=`<div class="card"><div class="stat-big">${total}分</div><p>この日の勉強時間</p></div><div class="card"><h3>📚 教科別</h3>`;
- let has=false;db.subjects.forEach(s=>{if(logs[s.id]){has=true;h+=`<p><strong style="color:${escapeHTML(s.color)}">${escapeHTML(s.icon)} ${escapeHTML(s.name)}</strong>：${Math.floor(logs[s.id]/60)}分</p>`}});if(!has)h+='<p class="small">この日の勉強記録はありません。</p>';h+=`</div><div class="card"><h3>📅 ${d.getMonth()+1}月の累計</h3><div class="stat-big" style="color:var(--blue2)">${Math.floor(month/60)}分</div></div>`;
- document.getElementById('day-title').innerText=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日の記録`;document.getElementById('day-content').innerHTML=h;document.getElementById('dayModal').classList.add('open')
+
+ const logs={...(db.history?.[key]||{})};
+ const d=parseDateKey(key);
+
+ // 通常記録とテスト専用記録を合算した当日の勉強時間
+ const total=Math.floor(totalForDate(key)/60);
+
+ // テスト専用記録を教科別に加算
+ Object.values(db.testHistory||{}).forEach(th=>{
+
+  Object.entries(th[key]||{}).forEach(([sid,sec])=>{
+
+   logs[sid]=
+    (Number(logs[sid])||0)+(Number(sec)||0);
+
+  });
+
+ });
+
+ // 通常記録とテスト専用記録の両方から日付を取得
+ const allDates=new Set([
+  ...Object.keys(db.history||{}),
+  ...Object.values(db.testHistory||{}).flatMap(th=>
+   Object.keys(th||{})
+  )
+ ]);
+
+ // 表示中の日付と同じ月の累計を計算
+ let month=0;
+
+ allDates.forEach(k=>{
+
+  const x=parseDateKey(k);
+
+  if(
+   x.getFullYear()===d.getFullYear()&&
+   x.getMonth()===d.getMonth()
+  ){
+   month+=totalForDate(k);
+  }
+
+ });
+
+ // 詳細画面を作成
+ let h=`
+  <div class="card">
+   <div class="stat-big">${total}分</div>
+   <p>この日の勉強時間</p>
+  </div>
+  <div class="card">
+   <h3>📚 教科別</h3>
+ `;
+
+ let has=false;
+
+ db.subjects.forEach(s=>{
+
+  if(logs[s.id]){
+
+   has=true;
+
+   h+=`
+    <p>
+     <strong style="color:${escapeHTML(s.color)}">
+      ${escapeHTML(s.icon)} ${escapeHTML(s.name)}
+     </strong>
+     ：${Math.floor(logs[s.id]/60)}分
+    </p>
+   `;
+
+  }
+
+ });
+
+ if(!has){
+  h+='<p class="small">この日の勉強記録はありません。</p>';
+ }
+
+ h+=`
+  </div>
+  <div class="card">
+   <h3>📅 ${d.getMonth()+1}月の累計</h3>
+   <div class="stat-big" style="color:var(--blue2)">
+    ${Math.floor(month/60)}分
+   </div>
+  </div>
+ `;
+
+ document.getElementById('day-title').innerText=
+  `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日の記録`;
+
+ document.getElementById('day-content').innerHTML=h;
+
+ document.getElementById('dayModal').classList.add('open');
 }
+
 
 function addTestPeriod(){
 

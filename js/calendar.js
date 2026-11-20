@@ -366,8 +366,7 @@ function deleteTestPeriod(id){
 function openTestDetail(id){
  detailTestId=id;const t=db.testPeriods.find(x=>x.id===id);if(!t)return;
  document.getElementById('detail-test-title').innerText=t.name;if(!t.reflections)t.reflections={};
- const totals={};db.subjects.forEach(s=>totals[s.id]=0);let cur=parseDateKey(t.start);cur.setDate(cur.getDate()-14);const end=parseDateKey(t.end);
- while(cur<=end){const k=dateKey(cur),scoped=(db.testHistory[t.id]||{})[k]||{};db.subjects.forEach(s=>totals[s.id]+=(Object.keys(scoped).length?scoped[s.id]||0:db.history[k]?.[s.id]||0));cur.setDate(cur.getDate()+1)}
+const totals=getTestSubjectStudyTotals(t);
  let table='<table class="extended"><tr><th>教科</th>'+Array.from({length:120},(_,i)=>`<th>${(i+1)%5===0?i+1:''}</th>`).join('')+'<th>合計</th></tr>';
  let refs='';
  subjectsForTest(t).forEach(s=>{

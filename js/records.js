@@ -173,6 +173,7 @@ function getUpcomingAttentionTest(){
 }
 
 // テスト期間における教科別の累積勉強時間を取得
+
 function getTestSubjectStudyTotals(test){
 
  const totals={};
@@ -185,23 +186,41 @@ function getTestSubjectStudyTotals(test){
   return totals;
  }
 
- // 既存のテスト振り返りと同じく開始日の14日前から集計
  let current=parseDateKey(test.start);
  current.setDate(current.getDate()-14);
 
  const end=parseDateKey(test.end);
 
+ const scopedHistory=db.testHistory?.[test.id]||{};
+
+ // 集計対象期間内に専用記録が存在するか確認
+ let hasScopedData=false;
+
+ const checkDate=new Date(current);
+
+ while(checkDate<=end){
+
+  const key=dateKey(checkDate);
+  const scoped=scopedHistory[key]||{};
+
+  if(Object.values(scoped).some(value=>
+    Number.isFinite(Number(value))&&Number(value)>0
+  )){
+    hasScopedData=true;
+    break;
+  }
+
+  checkDate.setDate(checkDate.getDate()+1);
+ }
+
+ // 専用記録がある場合は専用記録だけを集計
+ // 一度もない場合は過去データとの互換性を保つ
  while(current<=end){
 
   const key=dateKey(current);
 
-  // テスト専用の記録
-  const scoped=(db.testHistory?.[test.id]||{})[key]||{};
-
-  // テスト専用の記録がある日はそちらを優先
-  // なければ通常の勉強記録を使用
-  const daily=Object.keys(scoped).length
-   ?scoped
+  const daily=hasScopedData
+   ?(scopedHistory[key]||{})
    :(db.history?.[key]||{});
 
   db.subjects.forEach(subject=>{
@@ -216,6 +235,7 @@ function getTestSubjectStudyTotals(test){
 
  return totals;
 }
+
 
 // 教科ごとの注意表示を始める残り日数を取得
 function getSubjectAttentionDays(subjectId){

@@ -140,6 +140,7 @@ function renderCalendar(){
    表示中の月の勉強まとめ
 ======================================== */
 
+
 function renderMonthlyStudySummary(){
 
   const year=calViewDate.getFullYear();
@@ -155,42 +156,37 @@ function renderMonthlyStudySummary(){
     subjectTotals[subject.id]=0;
   });
 
+  // 表示中の月の通常記録だけを集計
   for(let day=1;day<=lastDay;day++){
 
     const key=dateKey(new Date(year,month,day));
+    const normalLogs=db.history?.[key]||{};
 
-    const dailyTotal=totalForDate(key);
+    let dailyTotal=0;
+
+    Object.entries(normalLogs).forEach(([id,seconds])=>{
+
+      const value=Number(seconds);
+
+      if(!Number.isFinite(value)||value<=0)return;
+
+      dailyTotal+=value;
+
+      if(subjectTotals[id]!==undefined){
+        subjectTotals[id]+=value;
+      }
+
+    });
 
     totalSeconds+=dailyTotal;
 
     if(dailyTotal>0){
       studyDays++;
     }
-
-    // 通常の勉強記録
-    const normalLogs=db.history?.[key]||{};
-
-    Object.entries(normalLogs).forEach(([id,seconds])=>{
-      if(subjectTotals[id]!==undefined){
-        subjectTotals[id]+=Number(seconds)||0;
-      }
-    });
-
-    // テスト専用の勉強記録
-    Object.values(db.testHistory||{}).forEach(testHistory=>{
-
-      const logs=testHistory?.[key]||{};
-
-      Object.entries(logs).forEach(([id,seconds])=>{
-        if(subjectTotals[id]!==undefined){
-          subjectTotals[id]+=Number(seconds)||0;
-        }
-      });
-
-    });
   }
 
   const totalMinutes=Math.floor(totalSeconds/60);
+
   const averageMinutes=studyDays
     ?Math.round(totalMinutes/studyDays)
     :0;
@@ -226,11 +222,9 @@ function renderMonthlyStudySummary(){
   days.textContent=`${studyDays}日`;
   average.textContent=formatStudyTime(averageMinutes);
 
-  if(top){
-    top.textContent=topSubject
-      ?`${topSubject.icon||'📚'} ${topSubject.name}`
-      :'まだ記録なし';
-  }
+  top.textContent=topSubject
+    ?`${topSubject.icon||'📚'} ${topSubject.name}`
+    :'まだ記録なし';
 }
 
 function changeMonth(n){

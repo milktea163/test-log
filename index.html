@@ -286,34 +286,103 @@
  <button class="primary full" onclick="saveAndCloseTasks()">閉じて保存する</button>
 </section>
 
+
 <section id="calendar" class="screen">
- <div class="card" id="testScheduleCard">
-  <h2 class="card-title">📝 テスト日程を登録</h2>
-  <p class="small" style="text-align:left;margin-top:-4px">ここで第1回・第2回・第3回などのテスト期間を登録します。登録後はホームに一番近いテストが自動表示されます。</p>
-  <input id="test-period-name" type="text" placeholder="例：第1回定期テスト">
-  <div class="schedule-form" style="margin-top:10px">
-   <div class="schedule-field"><label for="test-start">開始日</label><input id="test-start" type="date"></div>
-   <div class="schedule-field"><label for="test-end">終了日</label><input id="test-end" type="date"></div>
+
+  <!-- 左側：カレンダー -->
+  <div class="card" id="calendarDisplayCard">
+
+    <div class="calendar-head">
+      <button class="preset" onclick="changeMonth(-1)">◀</button>
+
+      <div class="section-title-row">
+        <h2 id="cal-month-title" class="card-title" style="margin:0"></h2>
+        <button class="inline-help" onclick="openHelp('calendar')">?</button>
+      </div>
+
+      <button class="preset" onclick="changeMonth(1)">▶</button>
+    </div>
+
+    <div class="weekdays" style="margin-top:10px">
+      <span>日</span>
+      <span>月</span>
+      <span>火</span>
+      <span>水</span>
+      <span>木</span>
+      <span>金</span>
+      <span>土</span>
+    </div>
+
+    <div id="cal-grid" class="calendar-grid"></div>
+
+    <details style="margin-top:12px">
+      <summary>🎨 カレンダーの色について</summary>
+      <p class="small">
+        🔵 テスト期間　🩷 1週間前　🟡 2週間前　🟢 3週間前　● 勉強記録あり
+      </p>
+    </details>
+
   </div>
-  <button class="primary full" style="margin-top:10px" onclick="addTestPeriod()">📅 テスト日程を登録</button>
- </div>
- <div class="card" id="testSubjectsCard">
-  <h2 class="card-title">📚 テストごとの教科設定</h2>
-  <p class="small" style="text-align:left">テストを選び、そのテストで受ける教科だけにチェックを入れてください。教科設定はテストごとに保存されます。</p>
-  <label for="subject-test-select" style="display:block;text-align:left;font-weight:900;margin:8px 0 5px">対象のテスト</label>
-  <select id="subject-test-select" onchange="renderTestSubjectSettings(this.value)" style="width:100%"></select>
-  <div id="test-subject-settings" class="help-grid" style="margin-top:12px"></div>
-  <button class="primary full" style="margin-top:12px" onclick="saveTestSubjectSettings()">このテストの教科を保存</button>
- </div>
-   <div class="card" id="calendarDisplayCard">
-  
-   </div>
-    <button class="preset" onclick="changeMonth(-1)">◀</button><div class="section-title-row"><h2 id="cal-month-title" class="card-title" style="margin:0"></h2><button class="inline-help" onclick="openHelp('calendar')">?</button></div><button class="preset" onclick="changeMonth(1)">▶</button></div>
-  <div class="weekdays" style="margin-top:10px"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
-  <div id="cal-grid" class="calendar-grid"></div>
-  <details style="margin-top:14px"><summary>🎨 カレンダーの色について</summary><p class="small">🔵 テスト期間　🩷 1週間前　🟡 2週間前　🟢 3週間前　● 勉強記録あり</p></details>
- </div>
- 
+
+  <!-- 右側：日程登録・教科設定 -->
+  <div id="calendarSidePanel">
+
+    <!-- テスト日程登録 -->
+    <div class="card" id="testScheduleCard">
+
+      <h2 class="card-title">📝 テスト日程を登録</h2>
+
+      <p class="small" style="text-align:left;margin-top:-4px">
+        ここで第1回・第2回・第3回などのテスト期間を登録します。登録後はホームに一番近いテストが自動表示されます。
+      </p>
+
+      <input id="test-period-name" type="text" placeholder="例：第1回定期テスト">
+
+      <div class="schedule-form" style="margin-top:10px">
+
+        <div class="schedule-field">
+          <label for="test-start">開始日</label>
+          <input id="test-start" type="date">
+        </div>
+
+        <div class="schedule-field">
+          <label for="test-end">終了日</label>
+          <input id="test-end" type="date">
+        </div>
+
+      </div>
+
+      <button class="primary full" style="margin-top:10px" onclick="addTestPeriod()">
+        📅 テスト日程を登録
+      </button>
+
+    </div>
+
+    <!-- テストごとの教科設定 -->
+    <div class="card" id="testSubjectsCard">
+
+      <h2 class="card-title">📚 テストごとの教科設定</h2>
+
+      <p class="small" style="text-align:left">
+        テストを選び、そのテストで受ける教科だけにチェックを入れてください。教科設定はテストごとに保存されます。
+      </p>
+
+      <label for="subject-test-select" style="display:block;text-align:left;font-weight:900;margin:8px 0 5px">
+        対象のテスト
+      </label>
+
+      <select id="subject-test-select" onchange="renderTestSubjectSettings(this.value)" style="width:100%"></select>
+
+      <div id="test-subject-settings" class="help-grid" style="margin-top:12px"></div>
+
+      <button class="primary full" style="margin-top:12px" onclick="saveTestSubjectSettings()">
+        このテストの教科を保存
+      </button>
+
+    </div>
+
+  </div>
+
 </section>
 
 <section id="reflection" class="screen">

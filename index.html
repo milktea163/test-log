@@ -291,6 +291,9 @@
 
   <!-- 左側：カレンダー -->
   <div class="card" id="calendarDisplayCard">
+    <div id="calendarLeftPanel">
+    
+    </div>
 
     <div class="calendar-head">
       <button class="preset" onclick="changeMonth(-1)">◀</button>
@@ -317,6 +320,42 @@
       </p>
     </details>
 
+    </div>
+
+  <!-- 今月の勉強まとめ -->
+  <div class="card monthly-study-card" id="monthlyStudyCard">
+    <h2 class="card-title">📊 今月の勉強まとめ</h2>
+    <p class="monthly-study-period" id="monthlyStudyPeriod"></p>
+
+    <div class="monthly-study-grid">
+
+      <div class="monthly-study-item">
+        <span class="monthly-study-icon">⏱️</span>
+        <span class="monthly-study-label">勉強時間</span>
+        <strong id="monthlyStudyTime">0時間</strong>
+      </div>
+
+      <div class="monthly-study-item">
+        <span class="monthly-study-icon">📅</span>
+        <span class="monthly-study-label">勉強日数</span>
+        <strong id="monthlyStudyDays">0日</strong>
+      </div>
+
+      <div class="monthly-study-item">
+        <span class="monthly-study-icon">📈</span>
+        <span class="monthly-study-label">1日平均</span>
+        <strong id="monthlyStudyAverage">0分</strong>
+      </div>
+
+      <div class="monthly-study-item">
+        <span class="monthly-study-icon">🏆</span>
+        <span class="monthly-study-label">最多勉強教科</span>
+        <strong id="monthlyStudyTopSubject">まだ記録なし</strong>
+      </div>
+
+    </div>
+  </div>
+
   </div>
 
   <!-- 右側：教科設定・次のテスト情報 -->
@@ -334,7 +373,20 @@
           onclick="openScheduleModal()"
           aria-label="テスト日程を登録"
           title="テスト日程を登録">
-          <span aria-hidden="true">＋</span>
+          <svg
+  viewBox="0 0 24 24"
+  width="23"
+  height="23"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true">
+  <rect x="3" y="5" width="18" height="16" rx="2"/>
+  <path d="M16 3v4M8 3v4M3 10h18"/>
+  <path d="M12 13v5M9.5 15.5h5"/>
+</svg>
         </button>
       </div>
 

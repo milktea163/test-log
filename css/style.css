@@ -1867,3 +1867,136 @@ body{
     font-size:.78rem;
   }
 }
+
+
+/* ========================================
+   カレンダー左側・今月の勉強まとめ
+======================================== */
+
+#calendarLeftPanel{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:14px;
+  min-width:0;
+}
+
+#calendarLeftPanel > .card{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+/* 勉強まとめ */
+.monthly-study-card{
+  padding:16px;
+  text-align:left;
+  background:#fff;
+}
+
+.monthly-study-card .card-title{
+  text-align:left;
+  margin-bottom:5px;
+}
+
+.monthly-study-period{
+  margin:0 0 12px;
+  color:#999;
+  font-size:.78rem;
+  font-weight:700;
+}
+
+.monthly-study-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+
+.monthly-study-item{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:5px;
+  min-width:0;
+  min-height:88px;
+  padding:12px;
+  border-radius:15px;
+  background:#fff7fa;
+  border:1px solid #f5e3eb;
+}
+
+.monthly-study-icon{
+  font-size:1.05rem;
+}
+
+.monthly-study-label{
+  color:#999;
+  font-size:.72rem;
+  font-weight:700;
+}
+
+.monthly-study-item strong{
+  max-width:100%;
+  color:var(--pink2);
+  font-size:1.05rem;
+  font-weight:900;
+  overflow-wrap:anywhere;
+  line-height:1.4;
+}
+
+/* 最多教科は少し文字を調整 */
+#monthlyStudyTopSubject{
+  font-size:.88rem;
+}
+
+/* iPad・PC横向き */
+@media (min-width:900px) and (orientation:landscape){
+
+  #calendarLeftPanel{
+    gap:14px;
+  }
+
+  .monthly-study-card{
+    padding:16px;
+  }
+
+  .monthly-study-item{
+    min-height:82px;
+  }
+}
+
+/* スマートフォン */
+@media (max-width:699px){
+
+  #calendarLeftPanel{
+    gap:12px;
+  }
+
+  .monthly-study-card{
+    padding:14px;
+  }
+
+  .monthly-study-grid{
+    gap:8px;
+  }
+
+  .monthly-study-item{
+    min-height:80px;
+    padding:10px;
+  }
+
+  .monthly-study-item strong{
+    font-size:.95rem;
+  }
+
+  #monthlyStudyTopSubject{
+    font-size:.78rem;
+  }
+}
+
+/* カレンダー＋アイコン */
+.schedule-add-button svg{
+  display:block;
+  width:23px;
+  height:23px;
+}

@@ -132,7 +132,106 @@ function renderCalendar(){
   if(test)el.classList.add('test');else if(cls)el.classList.add(cls);grid.appendChild(el)
  }
 }
-function changeMonth(n){calViewDate.setMonth(calViewDate.getMonth()+n);renderCalendar()}
+
+
+/* ========================================
+   表示中の月の勉強まとめ
+======================================== */
+
+function renderMonthlyStudySummary(){
+
+  const year=calViewDate.getFullYear();
+  const month=calViewDate.getMonth();
+
+  const lastDay=new Date(year,month+1,0).getDate();
+
+  let totalSeconds=0;
+  let studyDays=0;
+  const subjectTotals={};
+
+  db.subjects.forEach(subject=>{
+    subjectTotals[subject.id]=0;
+  });
+
+  for(let day=1;day<=lastDay;day++){
+
+    const key=dateKey(new Date(year,month,day));
+
+    const dailyTotal=totalForDate(key);
+
+    totalSeconds+=dailyTotal;
+
+    if(dailyTotal>0){
+      studyDays++;
+    }
+
+    // 通常の勉強記録
+    const normalLogs=db.history?.[key]||{};
+
+    Object.entries(normalLogs).forEach(([id,seconds])=>{
+      if(subjectTotals[id]!==undefined){
+        subjectTotals[id]+=Number(seconds)||0;
+      }
+    });
+
+    // テスト専用の勉強記録
+    Object.values(db.testHistory||{}).forEach(testHistory=>{
+
+      const logs=testHistory?.[key]||{};
+
+      Object.entries(logs).forEach(([id,seconds])=>{
+        if(subjectTotals[id]!==undefined){
+          subjectTotals[id]+=Number(seconds)||0;
+        }
+      });
+
+    });
+  }
+
+  const totalMinutes=Math.floor(totalSeconds/60);
+  const averageMinutes=studyDays
+    ?Math.round(totalMinutes/studyDays)
+    :0;
+
+  const topSubject=db.subjects
+    .filter(subject=>subjectTotals[subject.id]>0)
+    .sort((a,b)=>
+      subjectTotals[b.id]-subjectTotals[a.id]
+    )[0];
+
+  function formatStudyTime(minutes){
+
+    const hours=Math.floor(minutes/60);
+    const mins=minutes%60;
+
+    if(hours===0)return `${mins}分`;
+    if(mins===0)return `${hours}時間`;
+
+    return `${hours}時間${mins}分`;
+  }
+
+  const period=document.getElementById('monthlyStudyPeriod');
+  const time=document.getElementById('monthlyStudyTime');
+  const days=document.getElementById('monthlyStudyDays');
+  const average=document.getElementById('monthlyStudyAverage');
+  const top=document.getElementById('monthlyStudyTopSubject');
+
+  if(!period||!time||!days||!average||!top)return;
+
+  period.textContent=`${year}年${month+1}月の記録`;
+
+  time.textContent=formatStudyTime(totalMinutes);
+  days.textContent=`${studyDays}日`;
+  average.textContent=formatStudyTime(averageMinutes);
+
+  if(top){
+    top.textContent=topSubject
+      ?`${topSubject.icon||'📚'} ${topSubject.name}`
+      :'まだ記録なし';
+  }
+}
+
+function changeMonth(n){calViewDate.setMonth(calViewDate.getMonth()+n);}
 function openDayDetail(key){
  const logs={...(db.history[key]||{})},d=parseDateKey(key),total=Math.floor(totalForDate(key)/60);Object.values(db.testHistory||{}).forEach(th=>Object.entries(th[key]||{}).forEach(([sid,sec])=>logs[sid]=(Number(logs[sid])||0)+(Number(sec)||0)));
  let month=0;Object.keys(db.history).forEach(k=>{const x=parseDateKey(k);if(x.getFullYear()===d.getFullYear()&&x.getMonth()===d.getMonth())month+=totalForDate(k)});
@@ -146,7 +245,7 @@ function addTestPeriod(){
   const n=document.getElementById('test-period-name').value.trim();
   const s=document.getElementById('test-start').value;
   const e=document.getElementById('test-end').value;
-    closeScheduleModal();
+    
 
   if(!n||!s||!e){
     return alert('テスト名・開始日・終了日を入力してください。');
@@ -182,6 +281,7 @@ function addTestPeriod(){
     updateCountdown();
     return;
   }
+　  closeScheduleModal();
 
   renderRecordTestSelect();
   renderTestSubjectSettings(t.id);

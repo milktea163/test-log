@@ -2000,3 +2000,97 @@ body{
   width:23px;
   height:23px;
 }
+
+
+/* ========================================
+   カレンダー画面：左右2カラム最終配置
+======================================== */
+
+#calendar.screen.active{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);
+  gap:18px;
+  align-items:start;
+}
+
+/* 左側：カレンダー＋勉強まとめ */
+#calendarLeftPanel{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:14px;
+  min-width:0;
+}
+
+#calendarLeftPanel > .card{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  margin:0;
+}
+
+/* 右側：教科設定＋次のテスト情報 */
+#calendarSidePanel{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:14px;
+  min-width:0;
+}
+
+#calendarSidePanel > .card{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  margin:0;
+}
+
+/* 今月の勉強まとめ */
+#monthlyStudyCard{
+  padding:16px;
+}
+
+#monthlyStudyCard .card-title{
+  text-align:left;
+  margin-bottom:5px;
+}
+
+/* iPad縦向き */
+@media (min-width:700px) and (max-width:899px){
+
+  #calendar.screen.active{
+    grid-template-columns:minmax(0,1fr);
+  }
+
+  #calendarLeftPanel,
+  #calendarSidePanel{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
+
+/* iPad横向き・PC */
+@media (min-width:900px) and (orientation:landscape){
+
+  #calendar.screen.active{
+    grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);
+    gap:18px;
+  }
+
+  #calendarLeftPanel,
+  #calendarSidePanel{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
+
+/* スマートフォン */
+@media (max-width:699px){
+
+  #calendar.screen.active{
+    grid-template-columns:minmax(0,1fr);
+    gap:12px;
+  }
+
+  #calendarLeftPanel,
+  #calendarSidePanel{
+    grid-template-columns:minmax(0,1fr);
+    gap:12px;
+  }
+}

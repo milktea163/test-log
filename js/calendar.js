@@ -131,6 +131,8 @@ function renderCalendar(){
   db.testPeriods.forEach(t=>{const s=parseDateKey(t.start),e=parseDateKey(t.end);s.setHours(0,0,0,0);e.setHours(23,59,59,999);const diff=Math.round((dt-s)/86400000);if(dt>=s&&dt<=e)test=true;else if(diff>=-7&&diff<=-1&&db.countdownDisplayPeriod>=1)cls='w1';else if(diff>=-14&&diff<=-8&&db.countdownDisplayPeriod>=2&&!cls)cls='w2';else if(diff>=-21&&diff<=-15&&db.countdownDisplayPeriod>=3&&!cls)cls='w3'});
   if(test)el.classList.add('test');else if(cls)el.classList.add(cls);grid.appendChild(el)
  }
+
+ renderMonthlyStudySummary();
 }
 
 
@@ -231,7 +233,10 @@ function renderMonthlyStudySummary(){
   }
 }
 
-function changeMonth(n){calViewDate.setMonth(calViewDate.getMonth()+n);}
+function changeMonth(n){
+  calViewDate.setMonth(calViewDate.getMonth()+n);
+  renderCalendar();
+}
 function openDayDetail(key){
  const logs={...(db.history[key]||{})},d=parseDateKey(key),total=Math.floor(totalForDate(key)/60);Object.values(db.testHistory||{}).forEach(th=>Object.entries(th[key]||{}).forEach(([sid,sec])=>logs[sid]=(Number(logs[sid])||0)+(Number(sec)||0)));
  let month=0;Object.keys(db.history).forEach(k=>{const x=parseDateKey(k);if(x.getFullYear()===d.getFullYear()&&x.getMonth()===d.getMonth())month+=totalForDate(k)});

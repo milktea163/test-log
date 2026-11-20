@@ -264,6 +264,7 @@ function saveTestSubjectSettings(){
   renderStrategy();
 
   showToast('保存しました！');
+    renderNextTestInfo();
 }
 
 function updateSelectedSubjectNote(){

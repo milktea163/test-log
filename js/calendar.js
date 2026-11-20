@@ -16,23 +16,107 @@ function formatDateJP(key){
  const w=['日','月','火','水','木','金','土'][d.getDay()];
  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${w}）`;
 }
+
+
 function updateCountdown(){
- const d=document.getElementById('countdownDisplay'),name=document.getElementById('nextTestName'),date=document.getElementById('nextTestDate');
- const today=dateKey();
- const candidates=(db.testPeriods||[])
-   .filter(x=>x.start&&x.end&&x.end>=today)
-   .sort((a,b)=>a.start.localeCompare(b.start));
- const next=candidates[0]||null;
- if(!next){
-   name.innerText='テスト日程未登録';
-   d.innerText='まずは登録しましょう';
-   date.innerText='';
-   return;
- }
- name.innerText=next.name;
- date.innerText=formatDateJP(next.start)+(next.end!==next.start?` ～ ${formatDateJP(next.end)}`:'');
- const diff=Math.floor((parseDateKey(next.start)-parseDateKey(today))/86400000);
- d.innerText=diff>0?`あと ${diff} 日！`:diff===0?'🎉 テスト期間スタート！':'テスト期間中';
+  const d=document.getElementById('countdownDisplay');
+  const name=document.getElementById('nextTestName');
+  const date=document.getElementById('nextTestDate');
+  const today=dateKey();
+
+  const candidates=(db.testPeriods||[])
+    .filter(x=>x.start&&x.end&&x.end>=today)
+    .sort((a,b)=>a.start.localeCompare(b.start));
+
+  const next=candidates[0]||null;
+
+  if(!next){
+    name.innerText='テスト日程未登録';
+    d.innerText='まずは登録しましょう';
+    date.innerText='';
+  }else{
+    name.innerText=next.name;
+    date.innerText=formatDateJP(next.start)+
+      (next.end!==next.start?` ～ ${formatDateJP(next.end)}`:'');
+
+    const diff=Math.floor(
+      (parseDateKey(next.start)-parseDateKey(today))/86400000
+    );
+
+    d.innerText=diff>0
+      ?`あと ${diff} 日！`
+      :diff===0
+        ?'🎉 テスト期間スタート！'
+        :'テスト期間中';
+  }
+
+  renderNextTestInfo();
+}
+
+/* 次のテスト情報 */
+function renderNextTestInfo(){
+
+  const root=document.getElementById('calendarNextTestInfo');
+  if(!root)return;
+
+  const today=dateKey();
+
+  const next=(db.testPeriods||[])
+    .filter(t=>t.start&&t.end&&t.end>=today)
+    .sort((a,b)=>a.start.localeCompare(b.start))[0];
+
+  if(!next){
+    root.innerHTML=
+      '<div class="calendar-next-empty">' +
+      '<div class="calendar-next-empty-icon">📅</div>' +
+      '<strong>テスト日程がありません</strong>' +
+      '<p class="small">右上の＋ボタンから日程を登録できます。</p>' +
+      '</div>';
+    return;
+  }
+
+  const diff=Math.floor(
+    (parseDateKey(next.start)-parseDateKey(today))/86400000
+  );
+
+  const subjectCount=(next.subjectIds||[])
+    .filter(id=>db.subjects.some(s=>s.id===id))
+    .length;
+
+  const status=diff>0
+    ?`あと ${diff} 日`
+    :diff===0
+      ?'今日からスタート'
+      :'テスト期間中';
+
+  root.innerHTML=`
+    <div class="calendar-next-name">${escapeHTML(next.name)}</div>
+    <div class="calendar-next-countdown">${status}</div>
+
+    <div class="calendar-next-detail">
+      <div>
+        <span>開始日</span>
+        <strong>${escapeHTML(formatDateJP(next.start))}</strong>
+      </div>
+      <div>
+        <span>終了日</span>
+        <strong>${escapeHTML(formatDateJP(next.end))}</strong>
+      </div>
+      <div>
+        <span>対象教科</span>
+        <strong>${subjectCount} 教科</strong>
+      </div>
+    </div>
+  `;
+}
+
+/* 日程登録モーダル */
+function openScheduleModal(){
+  document.getElementById('scheduleModal')?.classList.add('open');
+}
+
+function closeScheduleModal(){
+  document.getElementById('scheduleModal')?.classList.remove('open');
 }
 
 function renderCalendar(){
@@ -62,6 +146,7 @@ function addTestPeriod(){
   const n=document.getElementById('test-period-name').value.trim();
   const s=document.getElementById('test-start').value;
   const e=document.getElementById('test-end').value;
+    closeScheduleModal();
 
   if(!n||!s||!e){
     return alert('テスト名・開始日・終了日を入力してください。');

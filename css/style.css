@@ -1610,3 +1610,260 @@ body{
   }
 
 }
+
+
+/* ========================================
+   カレンダー画面 新レイアウト
+======================================== */
+
+/* カレンダー全体 */
+#calendar.screen.active{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:14px;
+  align-items:start;
+  padding-bottom:calc(110px + env(safe-area-inset-bottom));
+}
+
+#calendar .card{
+  min-width:0;
+  margin-bottom:0;
+  border-radius:22px;
+}
+
+/* 右側のカード */
+#calendarSidePanel{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:14px;
+  min-width:0;
+}
+
+#calendarSidePanel > .card{
+  width:100%;
+  min-width:0;
+  padding:16px;
+}
+
+/* 教科設定カードの見出し */
+.calendar-card-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.calendar-card-heading .card-title{
+  margin:0;
+  text-align:left;
+}
+
+/* 小さな円形の日程登録ボタン */
+.schedule-add-button{
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border:0;
+  border-radius:50%;
+  background:#fff0f5;
+  color:var(--pink2);
+  font-size:1.8rem;
+  font-weight:700;
+  display:grid;
+  place-items:center;
+  box-shadow:0 3px 0 #f5dce6;
+  cursor:pointer;
+  transition:transform .15s ease,background .15s ease;
+}
+
+.schedule-add-button:active{
+  transform:scale(.94);
+  background:#ffe2ed;
+}
+
+/* 次のテスト情報 */
+.next-test-info-card{
+  text-align:left;
+}
+
+.next-test-info-card > .card-title{
+  text-align:left;
+}
+
+.calendar-next-empty{
+  padding:18px 10px;
+  text-align:center;
+  background:#fff8fb;
+  border-radius:16px;
+}
+
+.calendar-next-empty-icon{
+  font-size:1.8rem;
+  margin-bottom:6px;
+}
+
+.calendar-next-empty strong{
+  display:block;
+  color:#777;
+}
+
+.calendar-next-name{
+  font-size:1.08rem;
+  font-weight:900;
+  color:var(--pink2);
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+
+.calendar-next-countdown{
+  display:inline-block;
+  margin:10px 0 14px;
+  padding:7px 15px;
+  background:#fff0f5;
+  color:var(--pink2);
+  border-radius:999px;
+  font-size:1.05rem;
+  font-weight:900;
+}
+
+.calendar-next-detail{
+  display:grid;
+  gap:8px;
+}
+
+.calendar-next-detail > div{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  background:#fff8fb;
+  border-radius:12px;
+  font-size:.82rem;
+}
+
+.calendar-next-detail span{
+  color:#999;
+  font-weight:700;
+  flex:none;
+}
+
+.calendar-next-detail strong{
+  text-align:right;
+  overflow-wrap:anywhere;
+}
+
+/* 日程登録モーダル */
+#scheduleModal{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px 12px;
+  overflow-y:auto;
+}
+
+#scheduleModal.open{
+  display:flex;
+}
+
+#scheduleModal .schedule-modal-panel{
+  width:100%;
+  max-width:520px;
+  margin:auto;
+  max-height:calc(100dvh - 40px);
+  overflow-y:auto;
+  text-align:left;
+  box-shadow:0 12px 40px rgba(0,0,0,.18);
+}
+
+#scheduleModal .modal-head{
+  gap:10px;
+}
+
+#scheduleModal .modal-head .card-title{
+  margin:0;
+  text-align:left;
+}
+
+#scheduleModal input[type="text"],
+#scheduleModal input[type="date"]{
+  width:100%;
+  min-width:0;
+  min-height:46px;
+  border:1px solid #e8dce1;
+  border-radius:12px;
+  padding:10px;
+  background:#fff;
+  color:var(--text);
+}
+
+/* iPad縦向き・中間サイズ */
+@media (min-width:700px){
+
+  #calendar.screen.active{
+    grid-template-columns:minmax(0,1fr);
+    gap:16px;
+  }
+
+  #calendarSidePanel{
+    grid-template-columns:minmax(0,1fr);
+  }
+
+  #calendarDisplayCard{
+    padding:18px;
+  }
+}
+
+/* iPad横向き・PC */
+@media (min-width:900px) and (orientation:landscape){
+
+  #calendar.screen.active{
+    grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);
+    gap:18px;
+  }
+
+  #calendarSidePanel{
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+  }
+
+  #calendarSidePanel > .card{
+    padding:17px;
+  }
+
+  #calendarDisplayCard{
+    padding:19px;
+  }
+}
+
+/* スマートフォン */
+@media (max-width:699px){
+
+  #calendar.screen.active{
+    gap:12px;
+  }
+
+  #calendarDisplayCard{
+    padding:13px;
+  }
+
+  #calendarSidePanel{
+    grid-template-columns:minmax(0,1fr);
+    gap:12px;
+  }
+
+  #calendarSidePanel > .card{
+    padding:14px;
+  }
+
+  .schedule-add-button{
+    width:40px;
+    height:40px;
+    min-width:40px;
+  }
+
+  .calendar-next-detail > div{
+    font-size:.78rem;
+  }
+}

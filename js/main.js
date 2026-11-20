@@ -28,7 +28,12 @@ function showScreen(id){
  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function goCalendarRegister(){showScreen('calendar');setTimeout(()=>scrollToId('testScheduleCard'),80)}
+
+function goCalendarRegister(){
+  showScreen('calendar');
+  openScheduleModal();
+}
+
 function dismissFirstGuide(){
  const el=document.getElementById('firstGuide');if(el)el.classList.add('hidden');
  localStorage.setItem('studyLogV28_firstGuideDismissed','1');
